@@ -1,5 +1,6 @@
-import image.ImageMatrix;
-public class ImageGraph extends ResidualGraph<Pixel>
+import graph.Graph;
+
+public class ImageGraph extends Graph<Pixel>
 {
 	public ImageGraph() {}
 	public ImageGraph(ImageMatrix i) {}

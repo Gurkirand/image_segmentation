@@ -1,13 +1,14 @@
+package graphcut;
 import java.awt.Point;
 
-public class GraphCut
+public class GraphCut<E> extends Graph<E>
 {
-	private Graph graph;
 	private int maxFlow;
 	private HashMap<E, Vertex<E>> S, T, P;
 	private ArrayList<Vertex<E>> A, O;
 	public GraphCut() {}
-	public setGraph(ResidualGraph g) {}
+	public GraphCut(Graph source) {}
+	public setGraph(Graph g) {}
 	public void setSource(Point p) {}
 	public void setSource(int x, int y) {}
 	public void addSink(Point p) {}
