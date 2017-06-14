@@ -1,5 +1,6 @@
 package image;
 import java.awt.image.BufferedImage;
+import java.awt.image.WritableRaster;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +22,39 @@ public class ImageProcessor
 			return null;
 		}
 		
-		return ImageMatrix(imageToGrayscaleMatrix(image));
+		return new ImageMatrix(imageToGrayscaleMatrix(image));
+	}
+
+	public static boolean saveImage(String filename, ImageMatrix data)
+	{
+		boolean saved = false;
+
+		int w = data.matrix.length,
+		    h = data.matrix[0].length,
+		    grey;
+		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+
+		for (int x = 0; x < w; x++)
+		{
+			for (int y = 0; y < h; y++)
+			{
+				grey = data.matrix[x][y];
+				image.setRGB(x, y, (grey << 16) + (grey << 8) + grey);
+			}
+		}
+		 
+		try
+		{
+			File ouptut = new File(filename);
+			ImageIO.write(image, "jpg", ouptut);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			saved = false;
+		}
+
+		return saved;
 	}
 
 	//https://stackoverflow.com/questions/6524196/java-get-pixel-array-from-image
@@ -32,21 +65,26 @@ public class ImageProcessor
 		int[][] matrix = new int[w][h];
 
 		byte[] pixels = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+
 		boolean hasAlphaChannel = image.getAlphaRaster() != null;
 
 		int pixelLength = hasAlphaChannel ? 4: 3,
-		    r, g, b, value;
+			initPos = hasAlphaChannel ? 1: 0,
+		    pos, r, g, b, grey, value;
+		double rW = 0.3, gW = 0.59, bW = .11;
 		
 		for (int pixel = 0, row = 0, col = 0; pixel < pixels.length; pixel += pixelLength)
 		{
-			int argb = 0;
-			int pos = 0;
+			pos = initPos;
+			b = ((int) pixels[pixel + pos++] & 0xFF);
+			g = ((int) pixels[pixel + pos++] & 0xFF);
+			r = ((int) pixels[pixel + pos] & 0xFF);
 
-            b = ((int) pixels[pixel + pos++] & 0xff);
-            g = (((int) pixels[pixel + pos++] & 0xff) << 8);
-            r = (((int) pixels[pixel + pos] & 0xff) << 16);
-            value = (int) (.21 * r + .72 * g + .07 * b);
-            matrix[row][col] = value;
+            grey = (int) (rW*r + gW*g + bW*b);
+            value = (grey << 16) + (grey << 8) + grey;
+
+            matrix[col][row] = grey;
+
             col++;
             if (col == w)
 			{
@@ -62,8 +100,8 @@ public class ImageProcessor
 	public static ImageMatrix applyGaussianBlur(ImageMatrix image, int r)
 	{
 		ImageMatrix target = new ImageMatrix(image.matrix);
-		int h = image.matrix.length,
-		    w = image.matrix[0].length;
+		int w = image.matrix.length,
+		    h = image.matrix[0].length;
 		int[] boxFilter = boxFilter(r, 3);
 		return target;
 	}
