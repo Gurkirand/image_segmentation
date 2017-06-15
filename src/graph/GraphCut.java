@@ -1,4 +1,5 @@
 package graph;
+import util.*;
 import graph.*;
 import java.util.*;
 import java.awt.Point;
@@ -139,7 +140,10 @@ public class GraphCut<E> extends Graph<E>
 		return;
 	}
 
-	private void augment() {}
+	private void augment()
+	{
+	}
+
 	private void adopt() {}
 
 	private Node<E> createNode(Vertex<E> v)
@@ -148,6 +152,7 @@ public class GraphCut<E> extends Graph<E>
 		if (n == null)
 		{
 			n = new Node<E>(v);
+			n.pushFlow(maxFlow);
 		}
 		return n;
 	}
@@ -161,7 +166,7 @@ public class GraphCut<E> extends Graph<E>
 	{
 		private Vertex<E> vertex;
 		private Vertex<E> parent;
-		private HashMap<Vertex<E>, Double> adjList;
+		private HashMap<Vertex<E>, Integer> adjList;
 		private Tree tree = Tree.FREE;
 
 		// Maybe needed?
@@ -193,7 +198,17 @@ public class GraphCut<E> extends Graph<E>
 			while (itr.hasNext())
 			{
 				p = vertex.adjList.get(itr.next());
-				adjList.put(p.first, p.second);
+				adjList.put(p.first, (int) Math.floor(p.second));
+			}
+		}
+
+		private void pushFlow(int f)
+		{
+			Iterator<Vertex<E>> itr = adjList.keySet().iterator();
+			while (itr.hasNext())
+			{
+				Vertex<E> v = itr.next();
+				adjList.put(v, adjList.get(v) - f);
 			}
 		}
 
