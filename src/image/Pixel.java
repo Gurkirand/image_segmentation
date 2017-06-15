@@ -1,4 +1,6 @@
+package image;
 import java.awt.Point;
+
 public class Pixel
 {
 	int value;

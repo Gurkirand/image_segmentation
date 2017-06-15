@@ -1,5 +1,6 @@
 import image.*;
 import java.awt.image.BufferedImage;
+//import java.util.Function;
 
 public class ImageClassTests
 {

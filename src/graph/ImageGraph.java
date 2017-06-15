@@ -1,3 +1,4 @@
+package image;
 import graph.Graph;
 
 public class ImageGraph extends Graph<Pixel>
