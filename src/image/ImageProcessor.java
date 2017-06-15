@@ -51,11 +51,11 @@ public class ImageProcessor
 		{
 			File ouptut = new File(filename);
 			ImageIO.write(image, "jpg", ouptut);
+			saved = true;
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
-			saved = false;
 		}
 
 		return saved;
