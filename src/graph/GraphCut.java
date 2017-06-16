@@ -7,10 +7,11 @@ import java.awt.Point;
 public class GraphCut<E> extends Graph<E>
 {
 	private int maxFlow;
-	private Vertex<E> source;
-	private ArrayList<Vertex<E>> sinks;
+	private Node<E> source;
+	private Node<E> global_sink;
+	private ArrayList<Node<E>> sinks;
 	private HashMap<Vertex<E>, Node<E>> nodeSet;
-	private ArrayList<Node<E>> A, O;
+	private LinkedQueue<Node<E>> A, O;
 	private HashSet<Node<E>> S, T;
 	private Pair<Node<E>, Node<E>> P;
 
@@ -32,13 +33,13 @@ public class GraphCut<E> extends Graph<E>
 		T = new HashSet<>();
 		P = new Pair<>(null, null);
 		sinks = new ArrayList<>();
-		A = new ArrayList<>();
-		O = new ArrayList<>();
+		A = new LinkedQueue<>();
+		O = new LinkedQueue<>();
 	}
 
 	public boolean setSource(E s)
 	{
-		Vertex<E> _source = vertexSet.get(s);
+		Node<E> _source = createNode(vertexSet.get(s));
 		if (_source != null)
 		{
 			source = _source;
@@ -49,7 +50,7 @@ public class GraphCut<E> extends Graph<E>
 
 	public boolean addSink(E s)
 	{
-		Vertex<E> sink = vertexSet.get(s);
+		Node<E> sink = createNode(vertexSet.get(s));
 		if (sink != null)
 		{
 			return sinks.add(sink);
@@ -59,7 +60,7 @@ public class GraphCut<E> extends Graph<E>
 
 	public boolean removeSink(E s)
 	{
-		Vertex<E> sink = vertexSet.get(s);
+		Node<E> sink = nodeSet.get(vertexSet.get(s));
 		if (sink != null)
 		{
 			return sinks.remove(sink);
@@ -92,33 +93,40 @@ public class GraphCut<E> extends Graph<E>
 		P.first = null;
 		P.second = null;
 		
-		Node<E> s = createNode(source);
-		S.add(s);
-		A.add(s);
+		S.add(source);
+		A.enqueue(source);
 
-		for (Vertex<E> sink: sinks)
+		for (Node<E> sink: sinks)
 		{
-			s = createNode(sink);
-			T.add(s);
-			A.add(s);
+			T.add(sink);
+			A.enqueue(sink);
 		}
 	}
 
 	private void grow()
 	{
+		Vertex<E> _child;
 		Node<E> child;
+		Node<E> parent;
 		Iterator<Vertex<E>> itr;
 
-		for (Node<E> parent: A)
+		while (!A.isEmpty())
 		{
+			parent = A.dequeue();
 			itr = parent.iterator();
 			while (itr.hasNext())
 			{
-				child = createNode(itr.next());
+				_child = itr.next();
+				if (parent.adjList.get(_child) <= 0)
+				{
+					continue;
+				}
+
+				child = createNode(_child);
 				if (child.tree == Tree.FREE)
 				{
 					child.tree = parent.tree;
-					A.add(child);
+					A.enqueue(child);
 				} 
 				else if (child.tree != parent.tree)
 				{
@@ -135,54 +143,101 @@ public class GraphCut<E> extends Graph<E>
 					return;
 				}
 			}
-			A.remove(parent);
 		}
 		return;
 	}
-
+	
 	private void augment()
 	{
+		Node<E> parent;
+		Node<E> child;
+		int flow = findBottleneck();
+		for (Vertex<E> v: nodeSet.keySet())
+		{
+			pushFlow(nodeSet.get(v), flow);
+			v.unvisit();
+		}
+		maxFlow += flow;
 	}
 
-	private void adopt() {}
-	
-	protected boolean BFS(Node<E> startNode, Node<E> sink, ArrayList<Node<E>> Path,Visitor<E> visitor)
+	private void adopt()
 	{
-		LinkedQueue<Node<E>> nodeQueue = new LinkedQueue<>();
-		E startData = startNode.vertex.getData();
-		boolean foundAugmentedPath = false;
-
-		startNode.vertex.visit();
-		visitor.visit(startData);
-		nodeQueue.enqueue(startNode);
-		while( !nodeQueue.isEmpty() )
+		Node<E> parent;
+		while (!O.isEmpty())
 		{
-			Node<E> nextNode = nodeQueue.dequeue();
-			Iterator<Vertex<E>> iter =
-				nextNode.iterator(); // iterate adjacency list
+			parent = O.dequeue();
+		}
+	}
+	
+	protected int findBottleneck()
+	{
+		int bottleneck = 10000;
+		int capacity;
 
-			while( iter.hasNext() )
+		Iterator<Vertex<E>> itr;
+		Vertex<E> _child;
+		Node<E> child;	
+		Node<E> current = null;
+		HashSet<Node<E>> tree = S;
+		
+		LinkedQueue<Node<E>> searchSet = new LinkedQueue<>();
+		searchSet.enqueue(source);
+		
+		while (!searchSet.isEmpty() && current != global_sink)
+		{
+			current = searchSet.dequeue();
+
+			itr = current.iterator();
+			while (itr.hasNext())
 			{
-				Vertex<E> nextVertex = iter.next();
-				Node<E> neighbourNode = nodeSet.get(nextVertex);
-				Integer flow = nextNode.adjList.get(nextVertex);
-				//modified if statement to check if a node is free and if the edge is saturated
-				if( !neighbourNode.vertex.isVisited() && neighbourNode.tree != Tree.FREE && flow !=0) 
+				_child = itr.next();
+				child = nodeSet.get(_child);
+				if (child != null && child.tree != Tree.FREE && !_child.isVisited())
 				{
-					
-					nodeQueue.enqueue(neighbourNode);
-					neighbourNode.vertex.visit();
-					visitor.visit(neighbourNode.vertex.getData());
-					
-					if(neighbourNode.equals(sink)){
-						foundAugmentedPath = true;
-						break;
+					_child.visit();
+					if (tree.contains(child))
+					{
+						capacity = current.adjList.get(_child);
+						bottleneck = bottleneck > capacity ? capacity: bottleneck;
+						searchSet.enqueue(child);
+					}
+					if (child == P.first)
+					{
+						tree = T;
 					}
 				}
 			}
 		}
-		return foundAugmentedPath;
+
+		return bottleneck;
 	}
+
+	private void pushFlow(Node<E> n, int f)
+	{
+		Iterator<Vertex<E>> itr = n.adjList.keySet().iterator();
+		Vertex<E> _child;
+		Node<E> child;
+		while (itr.hasNext())
+		{
+			_child = itr.next();
+			int cap = n.adjList.get(_child) - f;
+			n.adjList.put(_child, cap);
+			if (cap <= 0 && !_child.isVisited())
+			{
+				child = nodeSet.get(_child);
+				if (child != null)
+				{
+					O.enqueue(child);
+				}
+			}
+			else
+			{
+				_child.unvisit();
+			}
+		}
+	}
+
+
 
 	private Node<E> createNode(Vertex<E> v)
 	{
@@ -205,6 +260,8 @@ public class GraphCut<E> extends Graph<E>
 		private Vertex<E> vertex;
 		private Vertex<E> parent;
 		private HashMap<Vertex<E>, Integer> adjList;
+		private HashMap<Vertex<E>, Integer> forwardAdjList;
+		private HashMap<Vertex<E>, Integer> backwardAdjList;
 		private Tree tree = Tree.FREE;
 
 		// Maybe needed?
@@ -230,7 +287,8 @@ public class GraphCut<E> extends Graph<E>
 
 		private void init()
 		{
-			adjList = new HashMap<>();
+			forwardAdjList = new HashMap<>();
+			backwardAdjList = new HashMap<>();
 			Pair<Vertex<E>, Double> p;
 			Iterator<E> itr = vertex.adjList.keySet().iterator();
 			while (itr.hasNext())
@@ -240,19 +298,28 @@ public class GraphCut<E> extends Graph<E>
 			}
 		}
 
-		private void pushFlow(int f)
-		{
-			Iterator<Vertex<E>> itr = adjList.keySet().iterator();
-			while (itr.hasNext())
-			{
-				Vertex<E> v = itr.next();
-				adjList.put(v, adjList.get(v) - f);
-			}
-		}
+		// private int compareDistances(Vertex<E> n)
+		// {
+		// 	E s = source.vertex.getData();
+		// 	int d1 = vertex.getData().distance(s);
+		// 	int d2 = n.getData().distance(s);
+		// 	return d1 - d2;
+		// }
 
 		private Iterator<Vertex<E>> iterator()
 		{
 			return adjList.keySet().iterator();
+		}
+
+		public void pushFlow(int f)
+		{
+			Iterator<Vertex<E>> itr = adjList.keySet().iterator();
+			Vertex<E> v;
+			while (itr.hasNext())
+			{
+				v = itr.next();
+				adjList.put(v, adjList.get(v) - f);
+			}
 		}
 
 		public boolean equals(Object o)

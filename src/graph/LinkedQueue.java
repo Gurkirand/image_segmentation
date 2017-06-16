@@ -78,6 +78,11 @@ public class LinkedQueue<T>
 
 	}
 
+	public void clear()
+	{
+		frontNode = backNode = null;
+	}
+
 
 	private class Node
 	{
