@@ -145,6 +145,44 @@ public class GraphCut<E> extends Graph<E>
 	}
 
 	private void adopt() {}
+	
+	protected boolean BFS(Node<E> startNode, Node<E> sink, ArrayList<Node<E>> Path,Visitor<E> visitor)
+	{
+		LinkedQueue<Node<E>> nodeQueue = new LinkedQueue<>();
+		E startData = startNode.vertex.getData();
+		boolean foundAugmentedPath = false;
+
+		startNode.vertex.visit();
+		visitor.visit(startData);
+		nodeQueue.enqueue(startNode);
+		while( !nodeQueue.isEmpty() )
+		{
+			Node<E> nextNode = nodeQueue.dequeue();
+			Iterator<Vertex<E>> iter =
+				nextNode.iterator(); // iterate adjacency list
+
+			while( iter.hasNext() )
+			{
+				Vertex<E> nextVertex = iter.next();
+				Node<E> neighbourNode = nodeSet.get(nextVertex);
+				Integer flow = nextNode.adjList.get(nextVertex);
+				//modified if statement to check if a node is free and if the edge is saturated
+				if( !neighbourNode.vertex.isVisited() && neighbourNode.tree != Tree.FREE && flow !=0) 
+				{
+					
+					nodeQueue.enqueue(neighbourNode);
+					neighbourNode.vertex.visit();
+					visitor.visit(neighbourNode.vertex.getData());
+					
+					if(neighbourNode.equals(sink)){
+						foundAugmentedPath = true;
+						break;
+					}
+				}
+			}
+		}
+		return foundAugmentedPath;
+	}
 
 	private Node<E> createNode(Vertex<E> v)
 	{
