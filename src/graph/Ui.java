@@ -99,6 +99,12 @@ public class Ui extends javax.swing.JFrame  {
                         .addComponent(jButton3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton4)
+                        .addComponent(saveSeg)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(saveGraph)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(displayGraph)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 631, Short.MAX_VALUE))
                 .addContainerGap())
@@ -116,6 +122,9 @@ public class Ui extends javax.swing.JFrame  {
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4))
+                	.addComponent(saveSeg)
+                	.addComponent(saveGraph)
+                	.addComponent(displayGraph)
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
@@ -179,8 +188,62 @@ public class Ui extends javax.swing.JFrame  {
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {                                         
         JOptionPane.showOptionDialog(null, "image segmentation started","Empty?", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);   
        
-    }                                        
+    }                                  
+    private void saveSegActionPerformed(ActionEvent e){
+    	JOptionPane.showMessageDialog(null, "Save segmentation");
+    }
+   
+    private void saveGraphActionPerformed(ActionEvent e) {
+		JOptionPane.showMessageDialog(null, "Save Graph");
+		
+	}
+    
+    private void displayGraphActionPerformed(ActionEvent e) {
+    	displayMenu();
+//method for the display the graph options
+  		public static void displayMenu(){
+  			JFrame frame = new JFrame("Display Menu");
+  			frame.setVisible(true);
+  			frame.setSize(300,300);
+  			JButton bft = new JButton("Breadth-First Traversal");
+  			JButton adj = new JButton("Adjacency List");
+  			JButton dft = new JButton("Depth-First Traversal");
+  			
+  			JPanel panel = new JPanel(new GridBagLayout());
+  			frame.getContentPane().add(panel);
+  			GridBagConstraints c = new GridBagConstraints();
+  			c.insets = new Insets(10,10,10, 10);
+  			
+  			c.gridx = 0;
+  			c.gridy = 0;
+  			panel.add(bft, c);
+  			bft.addActionListener(new Action());
+  			c.gridx = 0;
+  			c.gridy = 1;
+  			panel.add(adj, c);
+  			adj.addActionListener(new Action());
+  			c.gridx = 0;
+  			c.gridy = 2;
+  			panel.add(dft, c);
+  			dft.addActionListener(new Action());
+  		}
 
+    public static class Action implements ActionListener{
+		 
+		public void actionPerformed(ActionEvent e){
+			
+			String ac = e.getActionCommand();
+			 if(ac.equals("Breadth-First Traversal")){
+				JOptionPane.showMessageDialog(null,"Breadth-First Traversal");
+			}
+			else if(ac.equals("Adjacency List")){
+				JOptionPane.showMessageDialog(null,"Adjacency List");
+			}
+			else if(ac.equals("Depth-First Traversal")){
+				JOptionPane.showMessageDialog(null,"Depth-First Traversal");
+			}
+		}
+    }
     /**
      * @param args the command line arguments
      */
