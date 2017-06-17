@@ -1,15 +1,35 @@
 package javaapplication49;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.*;
+import java.awt.*;
+
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.*;
+//import GridBag.Action;
 /**
  *
  * @author Joohong Ahn, Willie
  */
 public class Ui extends javax.swing.JFrame  {
+	// Variables declaration - do not modify                     
+    private JLabel image;
+    private JButton jButton1;
+    private JButton jButton2;
+    private JButton jButton3;
+    private JButton jButton4;
+    private JLabel jLabel1;
+    private JMenu jMenu1;
+    private JMenu jMenu2;
+    private JPanel jPanel2;
+    private JButton saveSeg, saveGraph, displayGraph;
+    // End of variables declaration   
+    
     private int source;
     private int sink;
     int xsrc;
@@ -31,76 +51,105 @@ public class Ui extends javax.swing.JFrame  {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
-        jMenu1 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
-        jPanel2 = new javax.swing.JPanel();
-        image = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        jMenu1 = new JMenu();
+        jMenu2 = new JMenu();
+        jPanel2 = new JPanel();
+        image = new JLabel();
+        jButton1 = new JButton();
+        jButton2 = new JButton();
+        jButton3 = new JButton();
+        jButton4 = new JButton();
+        jLabel1 = new JLabel();
 
         jMenu1.setText("jMenu1");
 
         jMenu2.setText("jMenu2");
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        image.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
+        image.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 imageMouseClicked(evt);
             }
         });
 
         jButton1.setText("select image");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton1.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
         jButton2.setText("remove source");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 jButton2ActionPerformed(evt);
             }
         });
 
         jButton3.setText("remove sink");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 jButton3ActionPerformed(evt);
             }
         });
 
         jButton4.setText("run segmentation");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
+        jButton4.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 jButton4ActionPerformed(evt);
             }
         });
+        
+         saveSeg = new JButton("Save Segmentation");
+        saveSeg.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent e){
+        		saveSegActionPerformed(e);
+        	}
+        });
+		
+		saveGraph = new JButton ("Save Graph Model");
+		saveGraph.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent e){
+        		saveGraphActionPerformed(e);
+        	}
+        });
+		
+		displayGraph = new JButton ("Display the Graph");
+		displayGraph.addActionListener(new ActionListener(){
+        	public void actionPerformed(ActionEvent e){
+        		displayGraphActionPerformed(e);
+        	}
+
+        });
+		
 
         jLabel1.setText("Tap on the image to select source and sink. First tap will select the source and second tap will select sink.");
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+       GroupLayout jPanel2Layout = new GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(image, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                    .addComponent(image, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jButton1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButton2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButton4)
+                        .addComponent(saveSeg)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(saveGraph)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(displayGraph)
+                        .addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 631, Short.MAX_VALUE))
+                    .addComponent(jLabel1, GroupLayout.DEFAULT_SIZE, 631, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -116,6 +165,9 @@ public class Ui extends javax.swing.JFrame  {
                     .addComponent(jButton2)
                     .addComponent(jButton3)
                     .addComponent(jButton4))
+                	.addComponent(saveSeg)
+                	.addComponent(saveGraph)
+                	.addComponent(displayGraph)
                 .addContainerGap(18, Short.MAX_VALUE))
         );
 
@@ -133,7 +185,7 @@ public class Ui extends javax.swing.JFrame  {
         pack();
     }// </editor-fold>                        
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    private void jButton1ActionPerformed(ActionEvent evt) {                                         
          JFileChooser fc = new JFileChooser();
                 int result = fc.showOpenDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
@@ -146,7 +198,7 @@ public class Ui extends javax.swing.JFrame  {
                 }
     }                                        
 
-    private void imageMouseClicked(java.awt.event.MouseEvent evt) {                                   
+    private void imageMouseClicked(MouseEvent evt) {                                   
     if(source==0){
     xsrc=evt.getX();
     ysrc=evt.getY();
@@ -164,23 +216,81 @@ public class Ui extends javax.swing.JFrame  {
 
     }                                  
 
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    private void jButton2ActionPerformed(ActionEvent evt) {                                         
        source=0;
         JOptionPane.showOptionDialog(null, "source removed "+xsrc+","+ysrc,"Empty?", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);   
             
     }                                        
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    private void jButton3ActionPerformed(ActionEvent evt) {                                         
         sink=0;
         JOptionPane.showOptionDialog(null, "sink removed "+xsnk+","+ysnk,"Empty?", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);   
        
     }                                        
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    private void jButton4ActionPerformed(ActionEvent evt) {                                         
         JOptionPane.showOptionDialog(null, "image segmentation started","Empty?", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);   
        
-    }                                        
+    }
+    
+    private void saveSegActionPerformed(ActionEvent e){
+    	JOptionPane.showMessageDialog(null, "Save segmentation");
+    }
+   
+    private void saveGraphActionPerformed(ActionEvent e) {
+		JOptionPane.showMessageDialog(null, "Save Graph");
+		
+	}
+    
+    private void displayGraphActionPerformed(ActionEvent e) {
+		//JOptionPane.showMessageDialog(null, "Display Graph");
+    	displayMenu();
+    		}
+  //method for the display the graph options
+  		public static void displayMenu(){
+  			JFrame frame = new JFrame("Display Menu");
+  			frame.setVisible(true);
+  			frame.setSize(300,300);
+  			JButton bft = new JButton("Breadth-First Traversal");
+  			JButton adj = new JButton("Adjacency List");
+  			JButton dft = new JButton("Depth-First Traversal");
+  			
+  			JPanel panel = new JPanel(new GridBagLayout());
+  			frame.getContentPane().add(panel);
+  			GridBagConstraints c = new GridBagConstraints();
+  			c.insets = new Insets(10,10,10, 10);
+  			
+  			c.gridx = 0;
+  			c.gridy = 0;
+  			panel.add(bft, c);
+  			bft.addActionListener(new Action());
+  			c.gridx = 0;
+  			c.gridy = 1;
+  			panel.add(adj, c);
+  			adj.addActionListener(new Action());
+  			c.gridx = 0;
+  			c.gridy = 2;
+  			panel.add(dft, c);
+  			dft.addActionListener(new Action());
+  		}
 
+    public static class Action implements ActionListener{
+		 
+		public void actionPerformed(ActionEvent e){
+			
+			String ac = e.getActionCommand();
+			 if(ac.equals("Breadth-First Traversal")){
+				JOptionPane.showMessageDialog(null,"Breadth-First Traversal");
+			}
+			else if(ac.equals("Adjacency List")){
+				JOptionPane.showMessageDialog(null,"Adjacency List");
+			}
+			else if(ac.equals("Depth-First Traversal")){
+				JOptionPane.showMessageDialog(null,"Depth-First Traversal");
+			}
+		}
+    }
+   
     /**
      * @param args the command line arguments
      */
@@ -215,20 +325,5 @@ public class Ui extends javax.swing.JFrame  {
             }
         });
     }
-
-    // Variables declaration - do not modify                     
-    private javax.swing.JLabel image;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JPanel jPanel2;
-    // End of variables declaration                   
+                    
 }
-
-    
-    
-
