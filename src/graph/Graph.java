@@ -160,6 +160,20 @@ public class Graph<E>
 	public void depthFirstTraversalHelper(Vertex<E> startVertex, Visitor<E> visitor)
 	{
 		// YOU COMPLETE THIS (USE THE RECURSIVE ALGORITHM GIVEN FOR LESSON 11 EXERCISE)
+		startVertex.visit();
+		visitor.visit(startVertex.getData());
+		Iterator<Map.Entry<E, Pair<Vertex<E>, Double>>> iter = 
+				startVertex.iterator(); //iterate adj list
+		
+		while(iter.hasNext()){
+			Entry<E, Pair<Vertex<E>, Double>> nextEntry = iter.next();
+			Vertex<E> neighbourVertex = nextEntry.getValue().first;
+			if(!neighbourVertex.isVisited()){
+				depthFirstTraversalHelper(neighbourVertex, visitor);
+			}
+		}
+		
+		
 	}
 
 
