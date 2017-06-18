@@ -70,25 +70,25 @@ public class ImageGraph extends Graph<Pixel>
 				if(j < width-1){
 					Vertex<Pixel> rightVertex = vertexMatrix[i][j+1];
 					rightVertex = alreadyInSet(rightVertex);
-					currVertex.addToAdjList(rightVertex, currVertex.getData().weightDiff(rightVertex.getData()));
+					currVertex.addToAdjList(rightVertex, weightDifference(currVertex.getData(), rightVertex.getData()));
 				}
 				
 				if(j > 0){
 					Vertex<Pixel> leftVertex = vertexMatrix[i][j-1];
 					leftVertex = alreadyInSet(leftVertex);
-					currVertex.addToAdjList(leftVertex, currVertex.getData().weightDiff(leftVertex.getData()));
+					currVertex.addToAdjList(leftVertex, weightDifference(currVertex.getData(), leftVertex.getData()));
 				}
 				
 				if(i < height-1){
 					Vertex<Pixel> bottomVertex = vertexMatrix[i+1][j];
 					bottomVertex = alreadyInSet(bottomVertex);
-					currVertex.addToAdjList(bottomVertex, currVertex.getData().weightDiff(bottomVertex.getData()));
+					currVertex.addToAdjList(bottomVertex, weightDifference(currVertex.getData(), bottomVertex.getData()));
 				}
 				
 				if(i > 0){
 					Vertex<Pixel> topVertex = vertexMatrix[i-1][j];
 					topVertex = alreadyInSet(topVertex);
-					currVertex.addToAdjList(topVertex, currVertex.getData().weightDiff(topVertex.getData()));
+					currVertex.addToAdjList(topVertex, weightDifference(currVertex.getData(), topVertex.getData()));
 				}
 				
 			}
@@ -129,9 +129,9 @@ public class ImageGraph extends Graph<Pixel>
 		
 	// }
 
-	// private double weightDifference(Pixel p1, Pixel p2)
-	// {
-	// 	return 100 * (p1.value > p2.value ? p2.value / (1.0 * p1.value) : p1.value / (1.0 * p2.value));
-	// }
+	private double weightDifference(Pixel p1, Pixel p2)
+	{
+	return 100 * (p1.value > p2.value ? p2.value / (1.0 * p1.value) : p1.value / (1.0 * p2.value));
+	}
 	
 }
