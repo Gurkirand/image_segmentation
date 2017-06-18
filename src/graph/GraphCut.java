@@ -104,7 +104,6 @@ public class GraphCut<E> extends Graph<E>
 		{
 			return;
 		}
-		int counter = 0;
 		initRun();
 		while (true)
 		{
@@ -114,13 +113,7 @@ public class GraphCut<E> extends Graph<E>
 				break;
 			}
 			augment();
-
-			if (maxFlow >= 10000)
-			{
-				break;
-			}
 			adopt();
-			counter++;
 		}
 	}
 
