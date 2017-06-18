@@ -2,6 +2,7 @@ package graph;
 
 import util.*;
 import java.util.*;
+import java.io.*;
 import java.util.Map.Entry;
 // --- assumes definition of simple class Pair<E, F>
 
@@ -176,11 +177,29 @@ public class Graph<E>
 		
 	}
 
-
-	// WRITE THE INSTANCE METHOD HERE TO
-	//         WRITE THE GRAPH's vertices and its
-	//         adjacency list TO A TEXT FILE (SUGGEST TO PASS AN
-	//        ALREADY OPEN PrintWriter TO THIS) !
-
+	public void save(PrintWriter file)
+	{
+		Iterator<E> itr = vertexSet.keySet().iterator();
+		Iterator<E> adjItr;
+		Vertex<E> v;
+		E c;
+		while (itr.hasNext())
+		{
+			v = vertexSet.get(itr.next());
+			file.print(v.data+ ": {");
+			adjItr = v.adjList.keySet().iterator();
+			if (adjItr.hasNext())
+			{
+				c = adjItr.next();
+				file.print(c + " " + v.adjList.get(c));
+			}
+			while (adjItr.hasNext())
+			{
+				c = adjItr.next();
+				file.print(", " + c + " " + v.adjList.get(c));
+			}
+			file.print("}\n");
+		}
+	}
 
 }
