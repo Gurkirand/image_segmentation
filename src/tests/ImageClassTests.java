@@ -1,3 +1,5 @@
+package tests;
+
 import image.*;
 import util.*;
 import tests.base.*;
