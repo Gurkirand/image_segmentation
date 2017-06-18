@@ -10,7 +10,7 @@ import javax.swing.JOptionPane;
  *
  * @author Joohong Ahn, Willie
  */
-public class Ui extends javax.swing.JFrame  {
+public class UI extends javax.swing.JFrame  {
     private int source;
     private int sink;
     int xsrc;
@@ -18,7 +18,7 @@ public class Ui extends javax.swing.JFrame  {
     int xsnk;
     int ysnk;
             
-    public Ui() {
+    public UI() {
         
         initComponents();
     }
