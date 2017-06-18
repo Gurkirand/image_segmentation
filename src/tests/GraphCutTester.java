@@ -80,8 +80,8 @@ public class GraphCutTester
 		gc.run();
 		ArrayList<Pixel> s = gc.getSourceTree();
 		ArrayList<Pixel> t = gc.getSinkTree();
-		System.out.println(s.size());
-		System.out.println(t.size());
+		System.out.println("Source tree size: " + s.size());
+		System.out.println("Sink tree size: " + t.size());
 		System.out.println("Maxflow: " + gc.getMaxFlow());
 
 		for (Pixel pix: s)
