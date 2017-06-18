@@ -10,24 +10,29 @@ public class GraphCutTester
 	public static void main(String[] args)
 	{
 		Graph<Pixel> g = new Graph<>();
-		Pixel[][] img = new Pixel[10][10];
+		int graph_dim = 11;
+		int source = 5;
+		Pixel[][] img = new Pixel[graph_dim][graph_dim];
 		int i, j;
-		int x = 5;
-		for (i = 0; i < 10; i++)
+		int x = 250;
+		int v;
+		for (i = 0; i < graph_dim; i++)
 		{
-			for (j = 0; j < 10; j++)
+			for (j = 0; j < graph_dim; j++)
 			{
-				img[i][j] = new Pixel(x, i, j);
-				x += 5;
+				v = (int) (x - 50 * (Math.sqrt(Math.pow(i -source, 2) + Math.pow(j - source, 2))));
+				if (v <= 0)
+					v = 10;
+				img[i][j] = new Pixel(v, i, j);
 			}
 		}
 
 		Pixel p;
 		Pixel q;
 		double w;
-		for (i = 0; i < 10; i++)
+		for (i = 0; i < graph_dim; i++)
 		{
-			for (j = 0; j < 10; j++)
+			for (j = 0; j < graph_dim; j++)
 			{
 				p = img[i][j];
 				if (j > 0)
@@ -57,27 +62,38 @@ public class GraphCutTester
 			}
 		}
 	
+		for (i = 0; i < graph_dim; i ++)
+		{
+			System.out.print("[");
+			System.out.print(String.format("%5d", img[i][0].value));
+			for (j = 1; j < graph_dim; j++)
+			{
+				System.out.print(", " + String.format("%5d", img[i][j].value));
+			}
+			System.out.print("]\n");
+		}
+
 		GraphCut<Pixel> gc = new GraphCut<>(g, new ImageDirector());
-		gc.setSource(img[4][4]);
-		gc.addSink(img[9][9]);
+		gc.setSource(img[source][source]);
+		gc.addSink(img[graph_dim-1][graph_dim - 1]);
 		// gc.addSink(img[0][0]);
 		gc.run();
 		ArrayList<Pixel> s = gc.getSourceTree();
 		ArrayList<Pixel> t = gc.getSinkTree();
 		System.out.println(s.size());
 		System.out.println(t.size());
-		System.out.println(gc.getMaxFlow());
+		System.out.println("Maxflow: " + gc.getMaxFlow());
 
 		for (Pixel pix: s)
 			img[pix.coordinate.x][pix.coordinate.y].value = 1000;
 
 		for (Pixel pix: t)
 			img[pix.coordinate.x][pix.coordinate.y].value = 0;
-		for (i = 0; i < 10; i ++)
+		for (i = 0; i < graph_dim; i ++)
 		{
 			System.out.print("[");
 			System.out.print(String.format("%5d", img[i][0].value));
-			for (j = 1; j < 10; j++)
+			for (j = 1; j < graph_dim; j++)
 			{
 				System.out.print(", " + String.format("%5d", img[i][j].value));
 			}
