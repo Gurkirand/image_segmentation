@@ -3,6 +3,7 @@ package tests;
 import image.*;
 import graph.*;
 import java.util.*;
+import java.awt.image.BufferedImage;
 
 
 public class GraphCutTests
@@ -81,7 +82,7 @@ public class GraphCutTests
 		GraphCut<Pixel> gc = new GraphCut<>(g, new ImageDirector());
 		gc.setSource(img[source][source]);
 		gc.addSink(img[graph_dim-1][graph_dim - 1]);
-		// gc.addSink(img[0][0]);
+		gc.addSink(img[0][0]);
 		gc.run();
 		ArrayList<Pixel> s = gc.getSourceTree();
 		ArrayList<Pixel> t = gc.getSinkTree();
@@ -106,4 +107,11 @@ public class GraphCutTests
 		}
 	}
 
+	public static void testGraphCutWithImage(String name, Pixel source, Pixel[] sinks)
+	{
+		BufferedImage image = ImageProcessor.load(name);
+		ImageMatrix imgM = ImageProcessor.imageToGrayscaleMatrix(image);
+		ImageGraph imgG = new ImageGraph(imgM);
+		
+	}
 }

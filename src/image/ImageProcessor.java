@@ -12,7 +12,7 @@ public class ImageProcessor
 	private static final double GREEN_WEIGHT = 0.72;
 	private static final double BLUE_WEIGHT = 0.07;
 
-	public static BufferedImage loadImage(String filename)
+	public static BufferedImage load(String filename)
 	{
 		BufferedImage image = null;
 		try

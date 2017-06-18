@@ -10,7 +10,7 @@ public class ImageClassTests
 {
 	public static void main(String[] args)
 	{
-		Function<String, BufferedImage> loadF = (a) -> {return ImageProcessor.loadImage(a);};
+		Function<String, BufferedImage> loadF = (a) -> {return ImageProcessor.load(a);};
 		Function<BufferedImage, Integer> averageF = (a) -> {return ImageProcessor.getAverageGrayscaleColor(a);};
 		Function<BufferedImage, ImageMatrix> matrixF = (a) -> {return ImageProcessor.imageToGrayscaleMatrix(a);};
 		Function<Pair<String, ImageMatrix>, Boolean> saveF = (a) -> {return ImageProcessor.saveImage(a.first, a.second);};
