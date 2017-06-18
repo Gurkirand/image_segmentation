@@ -1,4 +1,5 @@
 package image;
+
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.DataBufferByte;
@@ -112,6 +113,39 @@ public class ImageProcessor
 	{
 		int[] rgb = getAverageColor(image);
 		return (int) (RED_WEIGHT*rgb[0] + GREEN_WEIGHT*rgb[1] + BLUE_WEIGHT*rgb[2]);
+	}
+
+	public static ImageMatrix getSegmentedImage(ImageMatrix image, Pixel[] section)
+	{
+		int average = 0,
+		    background,
+		    width = image.matrix.length,
+		    height = image.matrix[0].length,
+		    i, j; 
+		Pixel p;
+		ImageMatrix segment = new ImageMatrix(new int[width][height]);
+		for (i = 0; i < section.length; i++)
+		{
+			average += section[i].value;
+		}
+
+		average = average / section.length;
+		background = average > 255 * 0.6 ? 0: 255;
+
+		for (i = 0; i < width; i++)
+		{
+			for (j = 0; j < height; j++)
+			{
+				segment.matrix[i][j] = background;
+			}
+		}
+
+		for (i = 0; i < section.length; i++)
+		{
+			p = section[i];
+			segment.matrix[p.coordinate.x][p.coordinate.y] = p.value;
+		}
+		return segment;
 	}
 
 	/*
