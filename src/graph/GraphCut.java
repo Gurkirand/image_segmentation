@@ -6,6 +6,7 @@ import java.awt.Point;
 public class GraphCut<E> extends Graph<E>
 {
 	private int maxFlow;
+	private Director<E> director;
 	private Node<E> source;
 	private Node<E> global_sink;
 	private ArrayList<Node<E>> sinks;
@@ -14,16 +15,11 @@ public class GraphCut<E> extends Graph<E>
 	private HashSet<Node<E>> S, T;
 	private Pair<Node<E>, Node<E>> P;
 
-	public GraphCut()
+	public GraphCut(Graph<E> g, Director<E> d)
 	{
-		super();
-		init();
-	}
-
-	public GraphCut(Graph<E> g)
-	{
-		init();
 		vertexSet = g.vertexSet;
+		director = d;
+		init();
 	}
 
 	private void init()
@@ -42,6 +38,7 @@ public class GraphCut<E> extends Graph<E>
 		if (_source != null)
 		{
 			source = _source;
+			director.source = s;
 			return true;
 		}
 		return false;
@@ -245,6 +242,7 @@ public class GraphCut<E> extends Graph<E>
 		{
 			n = new Node<E>(v);
 			n.pushFlow(maxFlow);
+			n.createDirectedAdjLists(director);
 		}
 		return n;
 	}
@@ -286,8 +284,7 @@ public class GraphCut<E> extends Graph<E>
 
 		private void init()
 		{
-			forwardAdjList = new HashMap<>();
-			backwardAdjList = new HashMap<>();
+			adjList = new HashMap<>();
 			Pair<Vertex<E>, Double> p;
 			Iterator<E> itr = vertex.adjList.keySet().iterator();
 			while (itr.hasNext())
@@ -297,13 +294,28 @@ public class GraphCut<E> extends Graph<E>
 			}
 		}
 
-		// private int compareDistances(Vertex<E> n)
-		// {
-		// 	E s = source.vertex.getData();
-		// 	int d1 = vertex.getData().distance(s);
-		// 	int d2 = n.getData().distance(s);
-		// 	return d1 - d2;
-		// }
+		private void createDirectedAdjLists(Director<E> director)
+		{
+			forwardAdjList = new HashMap<>();
+			backwardAdjList = new HashMap<>();
+			Iterator<Vertex<E>> itr = adjList.keySet().iterator();
+			Vertex<E> v;
+			int d;
+
+			while (itr.hasNext())
+			{
+				v = itr.next();
+				d = director.direct(vertex.data, v.data);
+				if (d > 0)
+				{
+					forwardAdjList.put(v, adjList.get(v));
+				}
+				else
+				{
+					backwardAdjList.put(v, adjList.get(v));
+				}
+			}
+		}
 
 		private Iterator<Vertex<E>> iterator()
 		{
