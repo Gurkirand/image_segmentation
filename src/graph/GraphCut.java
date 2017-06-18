@@ -105,7 +105,6 @@ public class GraphCut<E> extends Graph<E>
 		{
 			return;
 		}
-		int counter = 0;
 		initRun();
 		while (true)
 		{
@@ -115,24 +114,8 @@ public class GraphCut<E> extends Graph<E>
 				break;
 			}
 			augment();
-
-			if (maxFlow >= 10000)
-			{
-				break;
-			}
 			adopt();
-			counter++;
-			// if (counter == 2)
-			// {
-				// for (Node<E> node: activeSource)
-				// 	System.out.print(node.vertex.data + " ");
-				// System.out.println("\n");
-				// for (Node<E> node: activeSink)
-				// 	System.out.print(node.vertex.data + " ");
-				// break;
-			// }
 		}
-		System.out.println("runs: " + counter);
 	}
 
 	private Node<E> createNode(Vertex<E> v)
@@ -185,19 +168,8 @@ public class GraphCut<E> extends Graph<E>
 
 		do
 		{
-			// choose = (int) Math.floor(Math.random() * active.size());
 			parent = active.remove();
 			itr = parent.iterator(currentTree);
-			// if (parent.tree == Tree.SOURCE)
-			// {
-			// 	tree = S;
-			// 	itr = parent.forwardIterator();
-			// }
-			// else
-			// {
-			// 	tree = T;
-			// 	itr = parent.backwardIterator();
-			// }
 			while (itr.hasNext())
 			{
 				_child = itr.next();
@@ -292,54 +264,6 @@ public class GraphCut<E> extends Graph<E>
 		return bottleneck;
 	}
 
-	// protected int findBottleneck()
-	// {		
-	// 	int bottleneck = 10000;
-	// 	int capacity;
-
-	// 	Iterator<Vertex<E>> itr;
-	// 	Node<E> current = null;
-	// 	Node<E> child;	
-	// 	Vertex<E> _child;
-	// 	HashSet<Node<E>> tree = S;
-	// 	Tree treeType = Tree.SOURCE;
-		
-	// 	LinkedList<Node<E>> searchSet = new LinkedList<>();
-	// 	searchSet.add(source);
-		
-	// 	while (!searchSet.isEmpty() && (current != global_sink))
-	// 	{
-	// 		current = searchSet.remove();
-
-	// 		itr = current.forwardIterator();
-	// 		while (itr.hasNext())
-	// 		{
-	// 			_child = itr.next();
-	// 			child = nodeSet.get(_child);
-	// 			if (child != null && child.tree == treeType && !_child.isVisited())
-	// 			{
-	// 				_child.visit();
-	// 				capacity = current.adjList.get(_child);
-	// 				if (capacity <= 0)
-	// 				{
-	// 					continue;
-	// 				}
-	// 				bottleneck = bottleneck > capacity ? capacity: bottleneck;
-	// 				searchSet.add(child);
-	// 				if (child == P.first)
-	// 				{
-	// 					tree = T;
-	// 					treeType = Tree.SINK;
-	// 					searchSet.clear();
-	// 					searchSet.add(P.second);
-	// 					break;
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-
-	// 	return bottleneck;
-	// }
 
 	private void pushFlow(Node<E> node, int f)
 	{
@@ -348,7 +272,6 @@ public class GraphCut<E> extends Graph<E>
 		{
 			return;
 		}
-		// Iterator<Vertex<E>> itr = n.adjList.keySet().iterator();
 		boolean isOrphan = orphans.contains(node);
 		if (isOrphan)
 		{
@@ -388,34 +311,6 @@ public class GraphCut<E> extends Graph<E>
 				activeSource.add(node.parent);
 			}
 		}
-		// while (itr.hasNext())
-		// {
-		// 	_child = itr.next();
-		// 	int cap = n.adjList.get(_child) - f;
-		// 	n.adjList.put(_child, cap);
-		// 	if (cap <= 0)
-		// 	{
-		// 		if (n.forwardAdjList.get(_child) == null)
-		// 		{
-		// 			continue;
-		// 		}
-		// 		child = nodeSet.get(_child);
-		// 		if (child != null && child.tree != Tree.FREE && child.tree == n.tree && !orphans.contains(child))
-		// 		{
-		// 			if (n.tree == Tree.SorphansURCE)
-		// 			{
-		// 				child.parent = null;
-		// 				orphans.add(child);
-		// 			}
-		// 			else if (!orphan)
-		// 			{
-		// 				orphan = true;
-		// 				n.parent = null;
-		// 				orphans.add(n);
-		// 			}
-		// 		}
-		// 	}
-		// }
 	}
 
 	private void adopt()
@@ -428,72 +323,6 @@ public class GraphCut<E> extends Graph<E>
 			processOrphan(orphan);
 
 		}
-
-		// while (!O.isEmpty())
-		// {
-		// 	foundParent = false;
-		// 	orphan = O.remove();
-		// 	if (orphan.tree == Tree.SOURCE)
-		// 	{
-		// 		parentItr = orphan.backwardIterator();
-		// 	}
-		// 	else
-		// 	{
-		// 		parentItr = orphan.forwardIterator();
-		// 	}
-		// 	while (parentItr.hasNext())
-		// 	{
-		// 		vertex = parentItr.next();
-		// 		node = nodeSet.get(vertex);
-		// 		if (node == null)
-		// 		{
-		// 			continue;
-		// 		}
-		// 		if (orphan.adjList.get(vertex) > 0 && !O.contains(node))
-		// 		{
-		// 			orphan.parent = node;
-		// 			foundParent = true;
-		// 			break;
-		// 		}
-		// 	}
-		// 	if (foundParent)
-		// 	{
-		// 		continue;
-		// 	}
-		// 	neighborItr = orphan.iterator();
-		// 	while (neighborItr.hasNext())
-		// 	{
-		// 		vertex = neighborItr.next();
-		// 		node = nodeSet.get(vertex);
-		// 		if (node == null || node.tree != orphan.tree)
-		// 		{
-		// 			continue;
-		// 		}
-		// 		if (node.parent == orphan)
-		// 		{
-		// 			if (!O.contains(node))
-		// 			{
-		// 				node.parent = null;
-		// 				O.add(node);
-		// 			}
-		// 		}
-		// 		else if (orphan.adjList.get(vertex) > 0)
-		// 		{
-		// 			A.add(node);
-		// 		}
-		// 	}
-		// 	orphan.parent = null;
-		// 	if (orphan.tree == Tree.SOURCE)
-		// 	{
-		// 		S.remove(orphan);
-		// 	} 
-		// 	else
-		// 	{
-		// 		T.remove(orphan);
-		// 	}
-		// 	orphan.tree = Tree.FREE;
-		// 	A.remove(orphan);
-		// }
 	}
 
 	private void processOrphan(Node<E> orphan)
