@@ -1,5 +1,4 @@
-package image;
-import graph.Graph;
+package graph;
 import image.ImageMatrix;
 import image.Pixel;
 
@@ -9,19 +8,22 @@ public class ImageGraph extends Graph<Pixel>
 		super();
 	}
 	
-	public ImageGraph(ImageMatrix imageMatrix) {
-		
+	public ImageGraph(ImageMatrix i) {
 		super();
-		populateVertexSet(imageMatrix);
-		
+		populateVertexSet(i);
 	}
 	
-	public void load(ImageMatrix i) {}
+	public void load(ImageMatrix i)
+	{
+		populateVertexSet(i);
+	}
 	
+	/*Already in Graph*/
 	public void reset() {
 		vertexSet.clear();
 	}
 	
+	/*Might be better to just read directly from the Pixel[][] matrix using add to vertex set method in Graph class*/
 	private Vertex<Pixel>[][] toVertexMatrix(int[][] matrix){ //from matrix of int to a matrix of vertices
 		
 		int height = matrix.length;
@@ -93,5 +95,43 @@ public class ImageGraph extends Graph<Pixel>
 		}
 		
 	}
+
+	//This might be faster and easier:
+	// private void populateVertexSet(ImageMatrix img)
+	// {
+	// 	int[][] matrix = img.matrix;
+	// 	int width = matrix.length,
+	// 	    height = matrix[0].length,
+	// 	    strideH = 1,
+	// 	    limitH = height-1,
+	// 	    limitW = width-1,
+	// 	    i = 0, j;
+	// 	Pixel current,
+	// 	      p;
+
+	// 	for(; i < limitW; i++)
+	// 	{
+	// 		for(j = 0; j < limitH; j += strideH)
+	// 		{
+	// 			current = new Pixel(matrix[i][j], i, j);
+	// 			if (i < width - 1)
+	// 			{
+	// 				p = new Pixel(matrix[i+1][j], i+1, j);
+	// 				addEdge(current, p, weightDifference(current, p));
+	// 			}
+	// 			if (j < height - 1)
+	// 			{
+	// 				p = new Pixel(matrix[i][j+1], i, j+1);
+	// 				addEdge(current, p, weightDifference(current, p));
+	// 			}
+	// 		}
+	// 	}
+		
+	// }
+
+	// private double weightDifference(Pixel p1, Pixel p2)
+	// {
+	// 	return 100 * (p1.value > p2.value ? p2.value / (1.0 * p1.value) : p1.value / (1.0 * p2.value));
+	// }
 	
 }

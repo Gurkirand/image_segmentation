@@ -5,9 +5,14 @@ import graph.*;
 import java.util.*;
 
 
-public class GraphCutTester
+public class GraphCutTests
 {
 	public static void main(String[] args)
+	{
+		testGraphCut();
+	}
+
+	public static void testGraphCut()
 	{
 		Graph<Pixel> g = new Graph<>();
 		int graph_dim = 11;
