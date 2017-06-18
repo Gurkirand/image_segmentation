@@ -28,7 +28,7 @@ public class Graph<E>
 
 		// add dest to source's adjacency list
 		src.addToAdjList(dst, cost);
-		//dst.addToAdjList(src, cost); // ADD THIS IF UNDIRECTED GRAPH
+		dst.addToAdjList(src, cost); // ADD THIS IF UNDIRECTED GRAPH
 	}
 
 	public void addEdge(E source, E dest, int cost)
