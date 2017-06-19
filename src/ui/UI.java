@@ -1,18 +1,22 @@
 package ui;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+
+import image.*;
+import graph.*;
 /**
  *
  * @author Joohong Ahn, Willie
  */
 public class UI extends javax.swing.JFrame  {
-    private int source;
-    private int sink;
+    private int source = 0;
+    private int sink = 0;
     int xsrc;
     int ysrc;
     int xsnk;
@@ -177,8 +181,12 @@ public class UI extends javax.swing.JFrame  {
        
     }                                        
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        JOptionPane.showOptionDialog(null, "image segmentation started","Empty?", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);   
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {
+    	if(image == null || source == 0|| sink == 0){
+    		JOptionPane.showOptionDialog(null, "image segmentation cannot start. Check source, sink and image!","Invalid Input", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
+    	}
+        JOptionPane.showOptionDialog(null, "image segmentation started","Segmentation", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
+        startGraphCut();
        
     }                                        
 
@@ -215,6 +223,20 @@ public class UI extends javax.swing.JFrame  {
                 new UI().setVisible(true);
             }
         });
+    }
+    
+    private void startGraphCut(BufferedImage image){
+    	ImageMatrix im = new ImageMatrix();
+    	im = ImageProcessor.imageToGrayscaleMatrix(image);
+    	ImageProcessor.applyGaussianBlur(im, 3);
+    	ImageGraph ig = new ImageGraph(im);
+    	Pixel src = new Pixel(im.matrix[xsrc][ysrc], xsrc, ysrc);
+    	Pixel snk = new Pixel(im.matrix[xsnk][ysnk], xsnk, ysnk);
+    	GraphCut<Pixel> gc = new GraphCut<>(ig, new ImageDirector());
+    	gc.setSource(src);
+    	gc.addSink(snk);
+    	gc.run();
+ 	
     }
 
     // Variables declaration - do not modify                     

@@ -4,6 +4,8 @@ import util.*;
 import java.util.*;
 import java.io.*;
 import java.util.Map.Entry;
+
+import image.Pixel;
 // --- assumes definition of simple class Pair<E, F>
 
 
@@ -160,7 +162,6 @@ public class Graph<E>
 
 	public void depthFirstTraversalHelper(Vertex<E> startVertex, Visitor<E> visitor)
 	{
-		// YOU COMPLETE THIS (USE THE RECURSIVE ALGORITHM GIVEN FOR LESSON 11 EXERCISE)
 		startVertex.visit();
 		visitor.visit(startVertex.getData());
 		Iterator<Map.Entry<E, Pair<Vertex<E>, Double>>> iter = 
@@ -186,20 +187,22 @@ public class Graph<E>
 		while (itr.hasNext())
 		{
 			v = vertexSet.get(itr.next());
-			file.print(v.data+ ": {");
+			file.print(v.data+ " ");
 			adjItr = v.adjList.keySet().iterator();
 			if (adjItr.hasNext())
 			{
 				c = adjItr.next();
-				file.print(c + " " + v.adjList.get(c));
+				file.print(c + " " + v.adjList.get(c).second);
 			}
 			while (adjItr.hasNext())
 			{
 				c = adjItr.next();
-				file.print(", " + c + " " + v.adjList.get(c));
+				file.print(" " + c + " " + v.adjList.get(c).second);
 			}
-			file.print("}\n");
+			file.println("");
 		}
+		file.close();
 	}
-
+	
+	
 }

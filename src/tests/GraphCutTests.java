@@ -4,6 +4,10 @@ import image.*;
 import graph.*;
 import java.util.*;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 
 
 public class GraphCutTests
@@ -16,6 +20,7 @@ public class GraphCutTests
 	public static void testGraphCut()
 	{
 		Graph<Pixel> g = new Graph<>();
+		ImageGraph ig = new ImageGraph();
 		int graph_dim = 11;
 		int source = 5;
 		Pixel[][] img = new Pixel[graph_dim][graph_dim];
@@ -80,6 +85,29 @@ public class GraphCutTests
 		}
 
 		GraphCut<Pixel> gc = new GraphCut<>(g, new ImageDirector());
+		//added test to see if saving and reading work
+		PrintWriter pw;
+		try {
+			pw = new PrintWriter(new FileOutputStream(
+				    new File("Output.txt")));
+			gc.save(pw);
+		} catch (FileNotFoundException e) {
+			System.out.println("file not found");
+			e.printStackTrace();
+		} 
+		ig.load(new File("Output.txt"));
+		PrintWriter pw1;
+		try {
+			pw1 = new PrintWriter(new FileOutputStream(
+					    new File("Output1.txt")));
+			ig.save(pw1);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		gc = new GraphCut<Pixel>(ig, new ImageDirector());//reconstructing graph from saved file
+		
 		gc.setSource(img[source][source]);
 		gc.addSink(img[graph_dim-1][graph_dim - 1]);
 		gc.addSink(img[0][0]);

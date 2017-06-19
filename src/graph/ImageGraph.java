@@ -1,4 +1,9 @@
 package graph;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+import java.util.StringTokenizer;
+
 import image.ImageMatrix;
 import image.Pixel;
 
@@ -53,7 +58,45 @@ public class ImageGraph extends Graph<Pixel>
 
 	private double weightDifference(Pixel p1, Pixel p2)
 	{
-	return 100 * (p1.value > p2.value ? p2.value / (1.0 * p1.value) : p1.value / (1.0 * p2.value));
+		return 100 * (p1.value > p2.value ? p2.value / (1.0 * p1.value) : p1.value / (1.0 * p2.value));
+	}
+	
+	public void load(File file){
+		try {
+			Scanner scanner = new Scanner(file);
+			int val, x, y;
+			Double edge;
+			String line;
+			StringTokenizer st;
+			Vertex<Pixel> curr;
+			this.clear();
+			
+			while(scanner.hasNextLine()){
+				line = scanner.nextLine();
+				st = new StringTokenizer(line, " ");
+				val = Integer.parseInt(st.nextToken());
+				x = Integer.parseInt(st.nextToken());
+				y = Integer.parseInt(st.nextToken());
+				
+				Pixel pixel = new Pixel(val, x, y);
+				addToVertexSet(pixel);
+				
+				while(st.hasMoreTokens()){
+					val = Integer.parseInt(st.nextToken());
+					x = Integer.parseInt(st.nextToken());
+					y = Integer.parseInt(st.nextToken());
+					edge = Double.parseDouble(st.nextToken());
+					
+					addEdge(new Pixel(val, x, y), pixel, edge);
+					
+				}
+				
+			}
+			
+		}catch(FileNotFoundException e){
+			e.printStackTrace();
+		}
+
 	}
 	
 }
