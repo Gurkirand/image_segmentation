@@ -1,8 +1,10 @@
 package tests;
 
+import tests.base.*;
 import image.*;
 import graph.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.function.Function;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,10 +16,11 @@ public class GraphCutTests
 {
 	public static void main(String[] args)
 	{
-		testGraphCut();
+		Function<Boolean, Boolean> graphCutF = (a) -> {return testGraphCut();};
+		Timer.time("Testing Graph Cut", graphCutF, true, true);
 	}
 
-	public static void testGraphCut()
+	public static boolean testGraphCut()
 	{
 		Graph<Pixel> g = new Graph<>();
 		ImageGraph ig = new ImageGraph();
@@ -133,6 +136,7 @@ public class GraphCutTests
 			}
 			System.out.print("]\n");
 		}
+		return true;
 	}
 
 	public static void testGraphCutWithImage(String name, Pixel source, Pixel[] sinks)
