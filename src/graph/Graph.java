@@ -177,7 +177,7 @@ public class Graph<E>
 		
 	}
 
-	public void save(PrintWriter file)
+	public void writeToFile(PrintWriter file)
 	{
 		Iterator<E> itr = vertexSet.keySet().iterator();
 		Iterator<E> adjItr;
