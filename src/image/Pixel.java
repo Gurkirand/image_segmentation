@@ -20,7 +20,8 @@ public class Pixel
 
 	public String toString()
 	{
-		return String.format("value: %d, coord: (%d, %d)", value, coordinate.x, coordinate.y);
+		//return String.format("value: %d, coord: (%d, %d)", value, coordinate.x, coordinate.y);
+		return String.format("%d %d %d", value, coordinate.x, coordinate.y);
 	}
 
 	public boolean equals(Object o)
