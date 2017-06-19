@@ -3,16 +3,18 @@ package tests;
 import tests.base.*;
 import image.*;
 import graph.*;
+import util.Pair;
 import java.util.ArrayList;
 import java.util.function.Function;
 import java.awt.image.BufferedImage;
+import java.awt.Point;
 
 
 public class GraphCutTests
 {
 	public static void main(String[] args)
 	{
-		Function<Boolean, Boolean> graphCutF = (a) -> {return testGraphCut();};
+		Function<Boolean, Boolean> graphCutF = (a) -> {return testGraphCutWithImage();};
 		Timer.time("Testing Graph Cut", graphCutF, true, true);
 	}
 
@@ -111,11 +113,61 @@ public class GraphCutTests
 		return true;
 	}
 
-	public static void testGraphCutWithImage(String name, Pixel source, Pixel[] sinks)
+	public static boolean testGraphCutWithImage()
 	{
-		BufferedImage image = ImageProcessor.load(name);
+		// String name = "data/newwinds";
+
+		String name = "CaravaggioSaintJohn";
+
+		BufferedImage image = ImageProcessor.load("data/" + name + ".jpg");
 		ImageMatrix imgM = ImageProcessor.imageToGrayscaleMatrix(image);
-		ImageGraph imgG = new ImageGraph(imgM);
+
+		//NEWWINDS
+		// Pixel source = new Pixel(imgM.matrix[41][45], 41, 45);
+		// Pixel[] sinks = new Pixel[]{
+		// 	new Pixel(imgM.matrix[2][92], 2, 92),
+		// 	new Pixel(imgM.matrix[42][5], 42, 5),
+		// 	new Pixel(imgM.matrix[90][80], 90, 80)
+		// };
+		// Caravaggio
+		Pixel source = new Pixel(imgM.matrix[1162][906], 1162, 906);
+		Pixel[] sinks = new Pixel[]{
+			new Pixel(imgM.matrix[815][1080], 815, 1080),
+			new Pixel(imgM.matrix[1557][360], 1557, 360),
+		};
+
+		Point[] points = new Point[sinks.length + 1];
+		points[0] = source.coordinate;
+		for (int i = 1; i < points.length; i++)
+		{
+			points[i] = sinks[i - 1].coordinate;
+		}
 		
+		Pair<Point, Point> b = imgM.getBoundingBox(points);
+		ImageMatrix imgM_crop = ImageProcessor.crop(imgM, b);
+		ImageGraph imgG = new ImageGraph();
+		imgG.loadCrop(imgM_crop, b.first.x, b.first.y);
+
+
+		GraphCut<Pixel> gc = new GraphCut<>(imgG, new ImageDirector());
+		gc.setSource(source);
+		for (Pixel s: sinks)
+		{
+			gc.addSink(s);
+		}
+		gc.run();
+		ArrayList<Pixel> s = gc.getSourceTree();
+		ArrayList<Pixel> t = gc.getSinkTree();
+		System.out.println("Source tree size: " + s.size());
+		System.out.println("Sink tree size: " + t.size());
+		System.out.println("Maxflow: " + gc.getMaxFlow());
+
+		Pixel[] s_copy = new Pixel[s.size()];
+		s.toArray(s_copy);
+		ImageMatrix imgM_segmented = ImageProcessor.getSegmentedImage(imgM, s_copy);
+	
+		ImageProcessor.saveImage("data/tests/" + name + "_segment.jpg", imgM_segmented);
+
+		return true;
 	}
 }
