@@ -106,11 +106,11 @@ class MarkerLabel extends javax.swing.JLabel{
 		repaint();
 	}
 
-	public void removeClosestSink(int x, int y)
+	public Point removeClosestSink(int x, int y)
 	{
 		if (sinks.isEmpty())
 		{
-			return;
+			return null;
 		}
 		double dist = 1000,
 		       _dist;
@@ -126,6 +126,7 @@ class MarkerLabel extends javax.swing.JLabel{
 		}
 		sinks.remove(sink);
 		repaint();
+		return sink;
 	}
 
     @Override
@@ -331,8 +332,8 @@ public class UI extends javax.swing.JFrame  {
 			}
 			else
 			{
-				sinks.remove(new Point(x, y));
-				inputMarker.removeClosestSink(x, y);
+				Point sink = inputMarker.removeClosestSink(x, y);
+				sinks.remove(sink);
 				// JOptionPane.showOptionDialog(null, "sink removed "+x+","+y,"Empty?", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);   
 			}
 		}
@@ -363,6 +364,10 @@ public class UI extends javax.swing.JFrame  {
 		}
 		System.out.println(source);
 		System.out.println(getSource());
+		for (Point p: getSinks())
+		{
+			System.out.println(p);
+		}
 	}                                        
 
 	public Point getSource()

@@ -1,5 +1,7 @@
 package image;
 
+import util.Pair;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 import java.awt.image.DataBufferByte;
@@ -113,6 +115,27 @@ public class ImageProcessor
 	{
 		int[] rgb = getAverageColor(image);
 		return (int) (RED_WEIGHT*rgb[0] + GREEN_WEIGHT*rgb[1] + BLUE_WEIGHT*rgb[2]);
+	}
+
+	public static ImageMatrix crop(ImageMatrix img, Pair<Point, Point> boundingBox)
+	{
+		Point min = boundingBox.first,
+		      max = boundingBox.second;
+
+		System.out.println("MIN: " + min);
+		System.out.println("MAX: " + max);
+
+		int[][] crop = new int[max.x - min.x + 1][max.y - min.y + 1];
+
+		for (int i = min.x, ci = 0; i <= max.x; i++, ci++)
+		{
+			for (int j = min.y, cj = 0; j <= max.y; j++, cj++)
+			{
+				crop[ci][cj] = img.matrix[i][j];
+			}
+		}
+
+		return new ImageMatrix(crop);
 	}
 
 	public static ImageMatrix getSegmentedImage(ImageMatrix image, Pixel[] section)

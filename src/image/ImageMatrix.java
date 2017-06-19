@@ -42,4 +42,5 @@ public class ImageMatrix
 
 		return new Pair<>(min, max);
 	}
+	
 }

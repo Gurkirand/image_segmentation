@@ -54,7 +54,6 @@ public class GraphCut<E> extends Graph<E>
 		if (sink != null)
 		{
 			sink.tree = Tree.SINK;
-			global_sink = sink;
 			return sinks.add(sink);
 		}
 		return false;
@@ -106,6 +105,7 @@ public class GraphCut<E> extends Graph<E>
 			return;
 		}
 		initRun();
+		int counter = 0;
 		while (true)
 		{
 			grow();
@@ -115,7 +115,13 @@ public class GraphCut<E> extends Graph<E>
 			}
 			augment();
 			adopt();
+			counter++;
+			if (counter % 5 == 0)
+				System.out.println("COUNT: " + counter);
+			if (counter == 20)
+				break;
 		}
+		System.out.println("COUNT: " + counter);
 	}
 
 	private Node<E> createNode(Vertex<E> v)
@@ -250,7 +256,7 @@ public class GraphCut<E> extends Graph<E>
 		
 		child = path.second;
 		parent = child.parent;
-		while (child != global_sink && parent.tree == Tree.SINK)
+		while (parent != null && parent.tree == Tree.SINK)
 		{
 			capacity = parent.adjList.get(child.vertex);
 			bottleneck = bottleneck > capacity ? capacity: bottleneck;
@@ -302,9 +308,9 @@ public class GraphCut<E> extends Graph<E>
 		{
 			if (node.adjList.get(node.parent.vertex) <= 0)
 			{
-				node.parent = null;
 				orphans.add(node);
 				activeSource.add(node.parent);
+				node.parent = null;
 			}
 		}
 	}
