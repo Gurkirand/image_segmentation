@@ -103,7 +103,8 @@ public class Main implements UIListener {
 	public void loadGraph(File f)
 	{
 		sourceMatrix = sourceGraph.load(f);
-		grayscaleMatrix = ImageProcessor.getGrayscaleCopy(sourceMatrix);
+		// grayscaleMatrix = ImageProcessor.getGrayscaleCopy(sourceMatrix);
+		grayscaleMatrix = sourceMatrix;
 		processedMatrix = grayscaleMatrix;
 		ui.setImage(ImageProcessor.matrixToImage(sourceMatrix, ImageProcessor.GRAYSCALE));
 	}

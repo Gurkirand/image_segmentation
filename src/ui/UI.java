@@ -16,14 +16,16 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.Graphics;
 import java.awt.Color;
+import java.awt.*;
+import java.awt.event.*;
 /**
  *
  * @author Joohong Ahn, Willie, Gurkiran
  */
 
-class ImageLabel extends javax.swing.JLabel{
-	private Image _myimage;
-	private int _imageW, _imageH;
+class ImageLabel extends javax.swing.JLabel {
+	public Image _myimage;
+	public int _imageW, _imageH;
 
 	public ImageLabel(String text){
 		super(text);
@@ -82,6 +84,12 @@ class MarkerLabel extends javax.swing.JLabel{
 	public MarkerLabel(String text){
 		super(text);
 		sinks = new ArrayList<>();
+	}
+
+	public void clear()
+	{
+		sinks.clear();
+		source = null;
 	}
 
 	public void setSource(int x, int y)
@@ -146,7 +154,7 @@ class MarkerLabel extends javax.swing.JLabel{
 	}
 }
 
-public class UI extends javax.swing.JFrame  {
+public class UI extends javax.swing.JFrame {
 
 	private ImageLabel input;
 	private MarkerLabel inputMarker;
@@ -175,6 +183,21 @@ public class UI extends javax.swing.JFrame  {
 	File file;
 	UIListener listener;
 
+	private class MyDispatcher implements KeyEventDispatcher {
+        @Override
+        public boolean dispatchKeyEvent(KeyEvent e) {
+            if (e.getID() == KeyEvent.KEY_PRESSED) {
+				 if ((e.getKeyCode() == KeyEvent.VK_Z) && ((e.getModifiers() & KeyEvent.CTRL_MASK) != 0))
+				 {
+					 undo();
+				 }
+            } else if (e.getID() == KeyEvent.KEY_RELEASED) {
+            } else if (e.getID() == KeyEvent.KEY_TYPED) {
+	            
+            }
+            return false;
+        }
+    }
 
 	public UI() {
 
@@ -290,28 +313,28 @@ public class UI extends javax.swing.JFrame  {
 				saveSegmentButtonActionPerformed(evt);
 			}
 		});
-		
-        // hideOutput.setText("hide output");
-        // displayButton.addActionListener(new java.awt.event.ActionListener() {
-        //     public void actionPerformed(java.awt.event.ActionEvent evt) {
-        //         hideOutputButtonActionPerformed(evt);
-        //     }
-        // });
 
-		
-        // displayButton.setText("show graph");
-        // displayButton.addActionListener(new java.awt.event.ActionListener() {
-        //     public void actionPerformed(java.awt.event.ActionEvent evt) {
-        //         displayButtonActionPerformed(evt);
-        //     }
-        // });
-        // 
-        // undoButton.setText("show graph");
-        // undoButton.addActionListener(new java.awt.event.ActionListener() {
-        //     public void actionPerformed(java.awt.event.ActionEvent evt) {
-        //         undoButtonActionPerformed(evt);
-        //     }
-        // });
+		// hideOutput.setText("hide output");
+		// displayButton.addActionListener(new java.awt.event.ActionListener() {
+		//     public void actionPerformed(java.awt.event.ActionEvent evt) {
+		//         hideOutputButtonActionPerformed(evt);
+		//     }
+		// });
+
+
+		// displayButton.setText("show graph");
+		// displayButton.addActionListener(new java.awt.event.ActionListener() {
+		//     public void actionPerformed(java.awt.event.ActionEvent evt) {
+		//         displayButtonActionPerformed(evt);
+		//     }
+		// });
+
+		// undoButton.setText("show graph");
+		// undoButton.addActionListener(new java.awt.event.ActionListener() {
+		//     public void actionPerformed(java.awt.event.ActionEvent evt) {
+		//         undoButtonActionPerformed(evt);
+		//     }
+		// });
 
 		// jLabel1.setText("Tap on the image to select source and sink. First tap will select the source and second tap will select sink.");
 		jLabel1.setText("Editing source. Click to add / change source.");
@@ -383,9 +406,15 @@ public class UI extends javax.swing.JFrame  {
 				);
 
 		pack();
+
+        KeyboardFocusManager manager = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+        manager.addKeyEventDispatcher(new MyDispatcher());
 	}// </editor-fold>                        
 
 	private void imageButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
+		output.setVisible(false);
+		output.repaint();
+		inputMarker.clear();
 		JFileChooser fc = new JFileChooser();
 		File workingDirectory = new File(System.getProperty("user.dir"));
 		fc.setCurrentDirectory(workingDirectory);
@@ -429,6 +458,14 @@ public class UI extends javax.swing.JFrame  {
 				removeSink(x, y);
 			}
 		}
+	}
+
+	private void setSource(Point s)
+	{
+		Point _source = source;
+		source = s;
+		inputMarker.source = s;
+		actions.push(new Pair<>(_source, "SOURCE ADD"));
 	}
 
 	private void setSource(int x, int y)
@@ -477,6 +514,9 @@ public class UI extends javax.swing.JFrame  {
 	}                                        
 
 	private void loadGraphButtonActionPerformed(java.awt.event.ActionEvent evt) {		
+		output.setVisible(false);
+		output.repaint();
+		inputMarker.clear();
 		JFileChooser fc = new JFileChooser();
 		File workingDirectory = new File(System.getProperty("user.dir"));
 		fc.setCurrentDirectory(workingDirectory);
@@ -485,7 +525,7 @@ public class UI extends javax.swing.JFrame  {
 			File file = fc.getSelectedFile();
 			listener.loadGraph(file);
 		}
-			JOptionPane.showOptionDialog(null, "Loading graph", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
+		JOptionPane.showOptionDialog(null, "Loading graph", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
 	}                                        
 
 	private void saveGraphButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
@@ -499,16 +539,16 @@ public class UI extends javax.swing.JFrame  {
 	}                                        
 
 	private void displayButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
-			// listener.segment(file);
-			// graphcut.setImageFile(file);
-			// graph = graphcut.printGraph();
-			// String ob[] = {graph};
-			// DisplayGraph.main(ob);
-			// // System.out.println(graphcut.printGraph());
+		// listener.segment(file);
+		// graphcut.setImageFile(file);
+		// graph = graphcut.printGraph();
+		// String ob[] = {graph};
+		// DisplayGraph.main(ob);
+		// // System.out.println(graphcut.printGraph());
 		if (file != null) {
 			String graph[] = {listener.displayGraph()};
 			DisplayGraph.main(graph);
-			System.out.println(graph);
+			// System.out.println(graph);
 		} else {
 			JOptionPane.showOptionDialog(null, "Please select an image first", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
 		}
@@ -526,7 +566,7 @@ public class UI extends javax.swing.JFrame  {
 
 	public Point[] getSinks()
 	{
-		Point[] sinksCopy = new Point[sinks.size()]; // allow for source ttoo
+		Point[] sinksCopy = new Point[inputMarker.sinks.size()]; // allow for source ttoo
 		Dimension trueSize = input.getImageSize();
 		Dimension adjSize = input.getAdjustedImageSize();
 		double rw = trueSize.width / (1.0 * adjSize.width);
@@ -534,7 +574,7 @@ public class UI extends javax.swing.JFrame  {
 		Point p;
 		for (int i = 0; i < sinksCopy.length; i++)
 		{
-			p = sinks.get(i);
+			p = inputMarker.sinks.get(i);
 			sinksCopy[i] = new Point((int) (p.x * rw), (int) (p.y * rh));
 		}
 		return sinksCopy;
@@ -551,29 +591,31 @@ public class UI extends javax.swing.JFrame  {
 		output.setVisible(false);
 	}
 
-	private void undoButtonActionPreformer()
+	private void undo()
 	{
-		actions.pop();
-		Pair<Point, String> action = actions.peek();
+		if (actions.isEmpty())
+			return;
+		Pair<Point, String> action = actions.pop();
 		String[] flags = action.second.split(" ");
-		if (flags[0] == "SOURCE" && flags[1] == "ADD")
+		if (flags[0].equals("SOURCE") && flags[1].equals("ADD"))
 		{
-			setSource(action.first.x, action.first.y);
+			setSource(action.first);
 		}
-		else if (flags[0] == "SINK")
+		else if (flags[0].equals("SINK"))
 		{
-			if (flags[1] == "ADD")
+			if (flags[1].equals("ADD"))
 			{
 				removeSink(action.first.x, action.first.y);
 			}
-			else if (flags[1] == "REM")
+			else if (flags[1].equals("REM"))
 			{
 				addSink(action.first.x, action.first.y);
 			}
 		}
-
+		actions.pop();
+		inputMarker.repaint();
 	}
-	
+
 	public void run() {
 		/* Set the Nimbus look and feel */
 		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
