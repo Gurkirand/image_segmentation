@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import util.*;
@@ -165,6 +167,8 @@ public class UI extends javax.swing.JFrame  {
 	private javax.swing.JMenu jMenu1;
 	private javax.swing.JMenu jMenu2;
 	private javax.swing.JPanel jPanel2;
+	private JButton displayButton;
+	JLabel hideOutput;
 
 	private LinkedStack<Pair<Point, String>> actions = new LinkedStack<>();
 
@@ -195,8 +199,8 @@ public class UI extends javax.swing.JFrame  {
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">                          
 	private void initComponents()
 	{
-		int h = 600,
-		    w = 600;
+		int h = 300,
+		    w = 100;
 		setSize(new Dimension(w, h));
 		jMenu1 = new javax.swing.JMenu();
 		jMenu2 = new javax.swing.JMenu();
@@ -230,6 +234,8 @@ public class UI extends javax.swing.JFrame  {
 		saveSegmentButton = new javax.swing.JButton();
 		hideOutputButton = new javax.swing.JButton();
 		undoButton = new javax.swing.JButton();
+		 displayButton=new javax.swing.JButton();
+		 hideOutput=new javax.swing.JLabel();
 
 		jMenu1.setText("jMenu1");
 
@@ -291,29 +297,29 @@ public class UI extends javax.swing.JFrame  {
 			}
 		});
 		
-        // hideOutput.setText("hide output");
-        // displayButton.addActionListener(new java.awt.event.ActionListener() {
-        //     public void actionPerformed(java.awt.event.ActionEvent evt) {
-        //         hideOutputButtonActionPerformed(evt);
-        //     }
-        // });
-
+        
+		hideOutput.setText("hide output");        
+		displayButton.addActionListener(new java.awt.event.ActionListener() {
+             public void actionPerformed(java.awt.event.ActionEvent evt) {
+                 hideOutputButtonActionPerformer(evt);
+                 
+             }
+         });
 		
-        // displayButton.setText("show graph");
-        // displayButton.addActionListener(new java.awt.event.ActionListener() {
-        //     public void actionPerformed(java.awt.event.ActionEvent evt) {
-        //         displayButtonActionPerformed(evt);
-        //     }
-        // });
-        // 
-        // undoButton.setText("show graph");
-        // undoButton.addActionListener(new java.awt.event.ActionListener() {
-        //     public void actionPerformed(java.awt.event.ActionEvent evt) {
-        //         undoButtonActionPerformed(evt);
-        //     }
-        // });
-
-		// jLabel1.setText("Tap on the image to select source and sink. First tap will select the source and second tap will select sink.");
+       displayButton.setText("show graph");
+         displayButton.addActionListener(new java.awt.event.ActionListener() {
+             public void actionPerformed(java.awt.event.ActionEvent evt) {
+                 displayButtonActionPerformed(evt);
+             }
+         });
+         
+         undoButton.setText("show graph");
+         undoButton.addActionListener(new java.awt.event.ActionListener() {
+             public void actionPerformed(java.awt.event.ActionEvent evt) {
+                 hideOutputButtonActionPerformer(evt);
+             }
+         });
+	jLabel1.setText("Tap on the image to select source and sink. First tap will select the source and second tap will select sink.");
 		jLabel1.setText("Editing source. Click to add / change source.");
 
 		javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -342,7 +348,12 @@ public class UI extends javax.swing.JFrame  {
 										.addGroup(jPanel2Layout.createSequentialGroup()
 											.addComponent(segmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
 											.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-											.addComponent(saveSegmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+											.addComponent(saveSegmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+											.addComponent(displayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+											.addComponent(hideOutputButton, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+											.addComponent(undoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+											
+												)
 										.addComponent(sourceButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
 							.addGap(96, 96, 96))))
 							);
@@ -367,7 +378,13 @@ public class UI extends javax.swing.JFrame  {
 						.addComponent(saveSegmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
 						.addComponent(sinkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addComponent(saveGraphButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(segmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+						.addComponent(segmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(displayButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(hideOutputButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(undoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						
+							)
+						
 					.addContainerGap())
 					);
 
@@ -546,12 +563,12 @@ public class UI extends javax.swing.JFrame  {
 		output.setIcon(i);
 	}
 
-	private void hideOutputButtonActionPerformer()
+	public void hideOutputButtonActionPerformer(java.awt.event.ActionEvent evt)
 	{
 		output.setVisible(false);
 	}
 
-	private void undoButtonActionPreformer()
+	public void undoButtonActionPreformer(java.awt.event.ActionEvent evt)
 	{
 		actions.pop();
 		Pair<Point, String> action = actions.peek();
