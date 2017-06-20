@@ -23,6 +23,12 @@ public class GraphCut<E> extends Graph<E>
 		init();
 	}
 
+	public void setGraph(Graph<E> g)
+	{
+		vertexSet = g.vertexSet;
+		init();
+	}
+
 	private void init()
 	{
 		sinks = new ArrayList<>();
@@ -102,6 +108,7 @@ public class GraphCut<E> extends Graph<E>
 	{
 		if (source == null || sinks.isEmpty())
 		{
+			System.out.println("No source or sink");
 			return;
 		}
 		initRun();
@@ -109,16 +116,19 @@ public class GraphCut<E> extends Graph<E>
 		while (true)
 		{
 			grow();
+			System.out.print("GROW");
 			if (path.first == null)
 			{
 				break;
 			}
 			augment();
+			System.out.print(" AUGMENT");
 			adopt();
+			System.out.print(" ADOPT");
 			counter++;
-			if (counter % 5 == 0)
-				System.out.println("COUNT: " + counter);
-			if (counter == 20)
+			// if (counter % 5 == 0)
+				System.out.println("\nCOUNT: " + counter);
+			if (counter == 11)
 				break;
 		}
 		System.out.println("COUNT: " + counter);
@@ -228,6 +238,16 @@ public class GraphCut<E> extends Graph<E>
 		return;
 	}
 	
+	// private void augment()
+	// {
+	// 	int flow = findBottleneck();
+	// 	for (Vertex<E> v: nodeSet.keySet())
+	// 	{
+	// 		pushFlow(nodeSet.get(v), flow);
+	// 		v.unvisit();
+	// 	}
+	// 	maxFlow += flow;
+	// }
 	private void augment()
 	{
 		int flow = findBottleneck();
@@ -265,6 +285,65 @@ public class GraphCut<E> extends Graph<E>
 		}
 		return bottleneck;
 	}
+	
+	private void findOrphans()
+	{
+		Node<E> parent;
+		Iterator<Vertex<E>> childrenItr;
+		Vertex<E> _child = null;
+		Node<E> child = null;
+		int cap = 0;
+		
+		Iterator<Node<E>> itr = S.iterator();
+		while (itr.hasNext())
+		{
+			parent = itr.next();
+			if (parent.vertex.visited)
+			{
+				continue;
+			}
+
+			childrenItr = parent.children.iterator();
+			while (childrenItr.hasNext())
+			{
+				_child = childrenItr.next();
+				cap = parent.adjList.get(_child);
+				if (cap > 0 || _child.visited)
+				{
+					continue;
+				}
+
+				child = nodeSet.get(_child);
+				if (child != null && child.tree == parent.tree)
+				{
+					_child.visit();
+					child.parent = null;
+					parent.children.remove(child);
+					orphans.add(child); 
+				}
+			}
+		}
+		
+		
+		itr = T.iterator();
+		while (itr.hasNext())
+		{
+			child = itr.next();
+			if (child.vertex.visited)
+			{
+				continue;
+			}
+
+			parent = child.parent;
+			if (parent != null && !parent.vertex.visited && child.adjList.get(parent) <= 0)
+			{
+				child.vertex.visit();
+				child.parent = null;
+				parent.children.remove(child);
+				orphans.add(child);
+			}
+		}
+	}
 
 
 	private void pushFlow(Node<E> node, int f)
@@ -300,7 +379,8 @@ public class GraphCut<E> extends Graph<E>
 				{
 					child.parent = null;
 					orphans.add(child);
-					activeSource.add(node);
+					node.children.remove(child);
+					// activeSource.add(node);
 				}
 			}
 		}
@@ -309,7 +389,8 @@ public class GraphCut<E> extends Graph<E>
 			if (node.adjList.get(node.parent.vertex) <= 0)
 			{
 				orphans.add(node);
-				activeSource.add(node.parent);
+				// activeSource.add(node.parent);
+				node.parent.children.remove(node);
 				node.parent = null;
 			}
 		}
@@ -354,7 +435,7 @@ public class GraphCut<E> extends Graph<E>
 		{
 			vertex = parentItr.next();
 			node = nodeSet.get(vertex);
-			if (node != null && node.tree == orphan.tree && orphan.adjList.get(vertex) > 0)
+			if (node != null && node.tree == orphan.tree && !node.vertex.visited && orphan.adjList.get(vertex) > 0)
 			{
 				if (!foundParent)
 				{

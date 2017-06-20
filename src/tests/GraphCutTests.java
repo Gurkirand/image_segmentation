@@ -18,7 +18,7 @@ public class GraphCutTests
 {
 	public static void main(String[] args)
 	{
-		Function<Boolean, Boolean> graphCutF = (a) -> {return testGraphCutWithImage();};
+		Function<Boolean, Boolean> graphCutF = (a) -> {return testGraphCut();};
 		Timer.time("Testing Graph Cut", graphCutF, true, true);
 	}
 
@@ -94,17 +94,17 @@ public class GraphCutTests
 		PrintWriter pw;
 		try {
 			pw = new PrintWriter(new FileOutputStream(
-				    new File("Output.txt")));
+				    new File("data/tests/graph_save.txt")));
 			gc.save(pw);
 		} catch (FileNotFoundException e) {
 			System.out.println("file not found");
 			e.printStackTrace();
 		} 
-		ig.load(new File("Output.txt"));
+		ig.load(new File("data/tests/graph_save.txt"));
 		PrintWriter pw1;
 		try {
 			pw1 = new PrintWriter(new FileOutputStream(
-					    new File("Output1.txt")));
+					    new File("data/tests/graph_loaded_save.txt")));
 			ig.save(pw1);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -143,26 +143,27 @@ public class GraphCutTests
 
 	public static boolean testGraphCutWithImage()
 	{
-		// String name = "data/newwinds";
+		String name = "jumpman";
 
-		String name = "CaravaggioSaintJohn";
+		// String name = "CaravaggioSaintJohn";
 
 		BufferedImage image = ImageProcessor.load("data/" + name + ".jpg");
-		ImageMatrix imgM = ImageProcessor.imageToGrayscaleMatrix(image);
+		ImageMatrix imgM = ImageProcessor.imageToMatrix(image, ImageProcessor.GRAYSCALE);
 
 		//NEWWINDS
-		// Pixel source = new Pixel(imgM.matrix[41][45], 41, 45);
-		// Pixel[] sinks = new Pixel[]{
-		// 	new Pixel(imgM.matrix[2][92], 2, 92),
-		// 	new Pixel(imgM.matrix[42][5], 42, 5),
-		// 	new Pixel(imgM.matrix[90][80], 90, 80)
-		// };
-		// Caravaggio
-		Pixel source = new Pixel(imgM.matrix[1162][906], 1162, 906);
+		Pixel source = new Pixel(imgM.matrix[41][45], 41, 45);
 		Pixel[] sinks = new Pixel[]{
-			new Pixel(imgM.matrix[815][1080], 815, 1080),
-			new Pixel(imgM.matrix[1557][360], 1557, 360),
+			new Pixel(imgM.matrix[2][92], 2, 92),
+			new Pixel(imgM.matrix[42][5], 42, 5),
+			new Pixel(imgM.matrix[90][80], 90, 80)
 		};
+
+		// Caravaggio
+		// Pixel source = new Pixel(imgM.matrix[1162][906], 1162, 906);
+		// Pixel[] sinks = new Pixel[]{
+		// 	new Pixel(imgM.matrix[815][1080], 815, 1080),
+		// 	new Pixel(imgM.matrix[1557][360], 1557, 360),
+		// };
 
 		Point[] points = new Point[sinks.length + 1];
 		points[0] = source.coordinate;
@@ -172,9 +173,9 @@ public class GraphCutTests
 		}
 		
 		Pair<Point, Point> b = imgM.getBoundingBox(points);
-		ImageMatrix imgM_crop = ImageProcessor.crop(imgM, b);
+		ImageMatrix imgM_crop = ImageProcessor.getCrop(imgM, b);
 		ImageGraph imgG = new ImageGraph();
-		imgG.loadCrop(imgM_crop, b.first.x, b.first.y);
+		imgG.load(imgM_crop, b.first.x, b.first.y);
 
 
 		GraphCut<Pixel> gc = new GraphCut<>(imgG, new ImageDirector());
@@ -194,7 +195,7 @@ public class GraphCutTests
 		s.toArray(s_copy);
 		ImageMatrix imgM_segmented = ImageProcessor.getSegmentedImage(imgM, s_copy);
 	
-		ImageProcessor.saveImage("data/tests/" + name + "_segment.jpg", imgM_segmented);
+		ImageProcessor.saveImage("data/tests/" + name + "_segment.jpg", imgM_segmented, ImageProcessor.GRAYSCALE);
 
 		return true;
 	}

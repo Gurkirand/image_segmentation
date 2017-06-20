@@ -20,12 +20,12 @@ import java.awt.Color;
  */
 
 class ImageLabel extends javax.swing.JLabel{
-    private Image _myimage;
-    private int _imageW, _imageH;
+	private Image _myimage;
+	private int _imageW, _imageH;
 
-    public ImageLabel(String text){
-        super(text);
-    }
+	public ImageLabel(String text){
+		super(text);
+	}
 
 	public void setIcon(BufferedImage img)
 	{
@@ -42,45 +42,45 @@ class ImageLabel extends javax.swing.JLabel{
 	public Dimension getAdjustedImageSize()
 	{
 		int w, h;
-	    if (this.getWidth() >= this.getHeight()) 
-		{
-			h = this.getHeight();
-			w = (int) (((1.0 * _imageW) / _imageH) * h);
-		}
-		else
+		if (_imageW > _imageH)
 		{
 			w = this.getWidth();
 			h = (int) (((1.0 * _imageH) / _imageW) * w);
 		}
+		else
+		{
+			h = this.getHeight();
+			w = (int) (((1.0 * _imageW) / _imageH) * h);
+		}
 		return new Dimension(w, h);
 	}
 
-    public void setIcon(javax.swing.Icon icon) {
-        super.setIcon(icon);
-        if (icon instanceof ImageIcon)
-        {
-            _myimage = ((ImageIcon) icon).getImage();
-        }
-    }
+	public void setIcon(javax.swing.Icon icon) {
+		super.setIcon(icon);
+		if (icon instanceof ImageIcon)
+		{
+			_myimage = ((ImageIcon) icon).getImage();
+		}
+	}
 
-    @Override
-    public void paint(Graphics g){
+	@Override
+	public void paint(Graphics g){
 		Dimension s = getAdjustedImageSize();
 		int w = s.width,
 		    h = s.height;
 
-        g.drawImage(_myimage, 0, 0, w, h, null);
-    }
+		g.drawImage(_myimage, 0, 0, w, h, null);
+	}
 }
 
 class MarkerLabel extends javax.swing.JLabel{
 	public Point source;
 	public ArrayList<Point> sinks;
 
-    public MarkerLabel(String text){
-        super(text);
-        sinks = new ArrayList<>();
-    }
+	public MarkerLabel(String text){
+		super(text);
+		sinks = new ArrayList<>();
+	}
 
 	public void setSource(int x, int y)
 	{
@@ -129,26 +129,44 @@ class MarkerLabel extends javax.swing.JLabel{
 		return sink;
 	}
 
-    @Override
-    public void paint(Graphics g){
-	    if (source != null)
+	@Override
+	public void paint(Graphics g){
+		if (source != null)
 		{
 			g.setColor(Color.red);
 			g.fillOval(source.x - 5, source.y - 5, 10, 10);
 		}
-        g.setColor(Color.blue);
+		g.setColor(Color.blue);
 		for (Point p: sinks)
 		{
 			g.fillOval(p.x - 5, p.y - 5, 10, 10);
 		}
-    }
+	}
 }
 
 public class UI extends javax.swing.JFrame  {
+
+	private ImageLabel input;
+	private MarkerLabel inputMarker;
+	private ImageLabel output;
+	private javax.swing.JLayeredPane io;
+	private javax.swing.JButton imageButton;
+	private javax.swing.JButton sourceButton;
+	private javax.swing.JButton sinkButton;
+	private javax.swing.JButton segmentButton;
+	private javax.swing.JButton loadGraphButton;
+	private javax.swing.JButton saveGraphButton;
+	private javax.swing.JButton saveSegmentButton;
+	private javax.swing.JLabel jLabel1;
+	private javax.swing.JMenu jMenu1;
+	private javax.swing.JMenu jMenu2;
+	private javax.swing.JPanel jPanel2;
+
 	boolean editSource = true;
 	boolean image_segmentation = false;
 	private Point source;
 	private ArrayList<Point> sinks = new ArrayList<>();
+	File file;
 	UIListener listener;
 
 
@@ -169,7 +187,8 @@ public class UI extends javax.swing.JFrame  {
 	 */
 	@SuppressWarnings("unchecked")
 	// <editor-fold defaultstate="collapsed" desc="Generated Code">                          
-	private void initComponents() {
+	private void initComponents()
+	{
 		int h = 600,
 		    w = 600;
 		setSize(new Dimension(w, h));
@@ -193,12 +212,15 @@ public class UI extends javax.swing.JFrame  {
 		io.add(output, 0);
 		io.add(inputMarker, 1);
 		io.add(input, 2);
-		
-		jButton1 = new javax.swing.JButton();
-		jButton2 = new javax.swing.JButton();
-		jButton3 = new javax.swing.JButton();
-		jButton4 = new javax.swing.JButton();
+
 		jLabel1 = new javax.swing.JLabel();
+		imageButton = new javax.swing.JButton();
+		sourceButton = new javax.swing.JButton();
+		sinkButton = new javax.swing.JButton();
+		segmentButton = new javax.swing.JButton();
+		loadGraphButton = new javax.swing.JButton();
+		saveGraphButton = new javax.swing.JButton();
+		saveSegmentButton = new javax.swing.JButton();
 
 		jMenu1.setText("jMenu1");
 
@@ -212,33 +234,60 @@ public class UI extends javax.swing.JFrame  {
 			}
 		});
 
-		jButton1.setText("select image");
-		jButton1.addActionListener(new java.awt.event.ActionListener() {
+		imageButton.setText("select image");
+		imageButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jButton1ActionPerformed(evt);
+				imageButtonActionPerformed(evt);
 			}
 		});
 
-		jButton2.setText("edit source");
-		jButton2.addActionListener(new java.awt.event.ActionListener() {
+		sourceButton.setText("edit source");
+		sourceButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jButton2ActionPerformed(evt);
+				sourceButtonActionPerformed(evt);
 			}
 		});
 
-		jButton3.setText("edit sink");
-		jButton3.addActionListener(new java.awt.event.ActionListener() {
+		sinkButton.setText("edit sink");
+		sinkButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jButton3ActionPerformed(evt);
+				sinkButtonActionPerformed(evt);
 			}
 		});
 
-		jButton4.setText("run segmentation");
-		jButton4.addActionListener(new java.awt.event.ActionListener() {
+		loadGraphButton.setText("load graph");
+		loadGraphButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				jButton4ActionPerformed(evt);
+				loadGraphButtonActionPerformed(evt);
 			}
 		});
+		saveGraphButton.setText("save graph");
+		saveGraphButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				saveGraphButtonActionPerformed(evt);
+			}
+		});
+
+		segmentButton.setText("run segmentation");
+		segmentButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				segmentButtonActionPerformed(evt);
+			}
+		});
+
+		saveSegmentButton.setText("save segmentation");
+		saveSegmentButton.addActionListener(new java.awt.event.ActionListener() {
+			public void actionPerformed(java.awt.event.ActionEvent evt) {
+				saveSegmentButtonActionPerformed(evt);
+			}
+		});
+		
+        // displayButton.setText("show graph");
+        // displayButton.addActionListener(new java.awt.event.ActionListener() {
+        //     public void actionPerformed(java.awt.event.ActionEvent evt) {
+        //         displayButtonActionPerformed(evt);
+        //     }
+        // });
 
 		// jLabel1.setText("Tap on the image to select source and sink. First tap will select the source and second tap will select sink.");
 		jLabel1.setText("Editing source. Click to add / change source.");
@@ -250,40 +299,59 @@ public class UI extends javax.swing.JFrame  {
 				.addGroup(jPanel2Layout.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addComponent(io, io.getPreferredSize().width, io.getPreferredSize().width, Short.MAX_VALUE)
 						.addGroup(jPanel2Layout.createSequentialGroup()
-							.addComponent(jButton1)
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-							.addComponent(jButton2)
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-							.addComponent(jButton3)
-							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-							.addComponent(jButton4)
-							.addGap(0, 0, Short.MAX_VALUE))
-						.addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 631, Short.MAX_VALUE))
-					.addContainerGap())
-				);
+							.addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addContainerGap())
+						.addGroup(jPanel2Layout.createSequentialGroup()
+							.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+								.addComponent(io, io.getPreferredSize().width, io.getPreferredSize().width, Short.MAX_VALUE)
+								.addGroup(jPanel2Layout.createSequentialGroup()
+									.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+										.addComponent(imageButton, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
+										.addComponent(sinkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+										.addComponent(loadGraphButton, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
+										.addComponent(saveGraphButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+										.addGroup(jPanel2Layout.createSequentialGroup()
+											.addComponent(segmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
+											.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(saveSegmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+										.addComponent(sourceButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+							.addGap(96, 96, 96))))
+							);
 		jPanel2Layout.setVerticalGroup(
 				jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 				.addGroup(jPanel2Layout.createSequentialGroup()
 					.addGap(10, 10, 10)
 					.addComponent(jLabel1)
-					.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+					.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 					.addComponent(io, io.getPreferredSize().height, io.getPreferredSize().height, Short.MAX_VALUE)
 					.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-					.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-						.addComponent(jButton1)
-						.addComponent(jButton2)
-						.addComponent(jButton3)
-						.addComponent(jButton4))
-					.addContainerGap(18, Short.MAX_VALUE))
-				);
+					.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+						.addGroup(jPanel2Layout.createSequentialGroup()
+							.addComponent(imageButton, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+							.addGap(0, 0, Short.MAX_VALUE))
+						.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+							.addGap(0, 0, Short.MAX_VALUE)
+							.addComponent(loadGraphButton, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
+						.addComponent(sourceButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+					.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+						.addComponent(saveSegmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
+						.addComponent(sinkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(saveGraphButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(segmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+					.addContainerGap())
+					);
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 		getContentPane().setLayout(layout);
 		layout.setHorizontalGroup(
 				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+				.addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, 660, javax.swing.GroupLayout.PREFERRED_SIZE)
 				);
 		layout.setVerticalGroup(
 				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -293,7 +361,7 @@ public class UI extends javax.swing.JFrame  {
 		pack();
 	}// </editor-fold>                        
 
-	private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+	private void imageButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
 		JFileChooser fc = new JFileChooser();
 		File workingDirectory = new File(System.getProperty("user.dir"));
 		fc.setCurrentDirectory(workingDirectory);
@@ -302,6 +370,7 @@ public class UI extends javax.swing.JFrame  {
 			File file = fc.getSelectedFile();
 			try {
 				BufferedImage i = ImageIO.read(file);
+				listener.setImage(i, file.getName());
 				input.setIcon(i);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -318,57 +387,126 @@ public class UI extends javax.swing.JFrame  {
 			return;
 		}
 		if(editSource){
-			source = new Point(x, y);
-			inputMarker.setSource(x, y);
-			// JOptionPane.showOptionDialog(null, "source selected "+x+","+y,"Empty?", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);   
+			setSource(x, y);
 		}
 		else
 		{
 			if (SwingUtilities.isLeftMouseButton(evt))
 			{
-				sinks.add(new Point(x, y));
-				inputMarker.addSink(x, y);
-				// JOptionPane.showOptionDialog(null, "sink selected "+x+","+y,"Empty?", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);   
+				addSink(x, y);
 			}
 			else
 			{
-				Point sink = inputMarker.removeClosestSink(x, y);
-				sinks.remove(sink);
-				// JOptionPane.showOptionDialog(null, "sink removed "+x+","+y,"Empty?", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);   
+				removeSink(x, y);
 			}
 		}
+	}
 
-	}                                  
+	private void setSource(int x, int y)
+	{
+		source = new Point(x, y);
+		inputMarker.setSource(x, y);
+	}
 
-	private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+	private void addSink(int x, int y)
+	{
+		sinks.add(new Point(x, y));
+		inputMarker.addSink(x, y);
+	}
+
+	private void removeSink(int x, int y)
+	{
+		Point sink = inputMarker.removeClosestSink(x, y);
+		sinks.remove(sink);
+	}
+
+	private void sourceButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
 		// source=0;
 		editSource = true;
 		jLabel1.setText("Editing source. Click to add / change source.");
-		// JOptionPane.showOptionDialog(null, "source removed "+xsrc+","+ysrc,"Empty?", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);   
 
 	}                                        
 
-	private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+	private void sinkButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
 		editSource = false;
 		jLabel1.setText("Editing sinks. Left click to add a source, and right click to remove one.");
-		// JOptionPane.showOptionDialog(null, "sink removed "+xsnk+","+ysnk,"Empty?", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);   
 
 	}                                        
 
-	private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+	private void segmentButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
 		JOptionPane.showOptionDialog(null, "image segmentation started","Empty?", JOptionPane.DEFAULT_OPTION,JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);   
 		image_segmentation = true;
 		if (listener != null)
 		{
-			listener.UIEvent();
-		}
-		System.out.println(source);
-		System.out.println(getSource());
-		for (Point p: getSinks())
-		{
-			System.out.println(p);
+			listener.segment(getSource(), getSinks());
 		}
 	}                                        
+
+	private void loadGraphButtonActionPerformed(java.awt.event.ActionEvent evt) {		
+		if (file != null) {
+			listener.loadGraph();
+			// listener.segment(file);
+			// graphcut.setImageFile(file);
+			// graph = graphcut.printGraph();
+			// String ob[] = {graph};
+			// DisplayGraph.main(ob);
+			// // System.out.println(graphcut.printGraph());
+		} else {
+			JOptionPane.showOptionDialog(null, "Please select an image first", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
+		}
+	}                                        
+
+	private void saveGraphButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
+		listener.saveGraph();
+		// FileOutputStream fop = null;
+		// File file;
+		// try {
+
+		// 	file = new File("outputs/graph.txt");
+		// 	fop = new FileOutputStream(file);
+
+		// 	// if file doesnt exists, then create it
+		// 	if (!file.exists()) {
+		// 		file.createNewFile();
+		// 	}
+
+		// 	// get the content in bytes
+		// 	byte[] contentInBytes = graph.getBytes();
+
+		// 	fop.write(contentInBytes);
+		// 	fop.flush();
+		// 	fop.close();
+		// 	JOptionPane.showOptionDialog(null, "Graph saved to file", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
+
+
+		// } catch (IOException e) {
+		// 	e.printStackTrace();
+		// } finally {
+		// 	try {
+		// 		if (fop != null) {
+		// 			fop.close();
+		// 		}
+		// 	} catch (IOException e) {
+		// 		e.printStackTrace();
+		// 	}
+		// }
+	}                                        
+
+	private void saveSegmentButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
+		// TODO add your handling code here:
+		listener.saveSegment();
+	}                                        
+
+	private void displayButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
+		if (file != null) {
+			String graph[] = {listener.displayGraph()};
+			DisplayGraph.main(graph);
+			System.out.println(graph);
+		} else {
+			JOptionPane.showOptionDialog(null, "Please select an image first", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
+		}
+	}
+
 
 	public Point getSource()
 	{
@@ -378,7 +516,7 @@ public class UI extends javax.swing.JFrame  {
 		double rh = trueSize.height / (1.0 * adjSize.height);
 		return new Point((int) (source.x * rw), (int) (source.y * rh));
 	}
-	
+
 	public Point[] getSinks()
 	{
 		Point[] sinksCopy = new Point[sinks.size()];
@@ -393,6 +531,38 @@ public class UI extends javax.swing.JFrame  {
 			sinksCopy[i] = new Point((int) (p.x * rw), (int) (p.y * rh));
 		}
 		return sinksCopy;
+	}
+
+	public void run() {
+		/* Set the Nimbus look and feel */
+		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+		 * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+		 */
+		try {
+			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+				if ("Nimbus".equals(info.getName())) {
+					javax.swing.UIManager.setLookAndFeel(info.getClassName());
+					break;
+				}
+			}
+		} catch (ClassNotFoundException ex) {
+			java.util.logging.Logger.getLogger(UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (InstantiationException ex) {
+			java.util.logging.Logger.getLogger(UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (IllegalAccessException ex) {
+			java.util.logging.Logger.getLogger(UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
+			java.util.logging.Logger.getLogger(UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+		}
+		//</editor-fold>
+
+		/* Create and display the form */
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				setVisible(true);
+			}
+		});
 	}
 
 	/**
@@ -430,21 +600,6 @@ public class UI extends javax.swing.JFrame  {
 			}
 		});
 	}
-
-	// Variables declaration - do not modify                     
-	private ImageLabel input;
-	private MarkerLabel inputMarker;
-	private ImageLabel output;
-	private javax.swing.JLayeredPane io;
-	private javax.swing.JButton jButton1;
-	private javax.swing.JButton jButton2;
-	private javax.swing.JButton jButton3;
-	private javax.swing.JButton jButton4;
-	private javax.swing.JLabel jLabel1;
-	private javax.swing.JMenu jMenu1;
-	private javax.swing.JMenu jMenu2;
-	private javax.swing.JPanel jPanel2;
-	// End of variables declaration                   
 }
 
 

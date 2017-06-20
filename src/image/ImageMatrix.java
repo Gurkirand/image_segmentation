@@ -1,6 +1,7 @@
 package image;
 import util.Pair;
 import java.awt.Point;
+import java.awt.Dimension;
 
 public class ImageMatrix
 {
@@ -43,4 +44,13 @@ public class ImageMatrix
 		return new Pair<>(min, max);
 	}
 	
+	public int getWidth()
+	{
+		return matrix.length;
+	}
+
+	public int getHeight()
+	{
+		return matrix[0].length;
+	}
 }

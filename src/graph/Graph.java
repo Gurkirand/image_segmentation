@@ -177,9 +177,10 @@ public class Graph<E>
 		
 		
 	}
-
-	public void save(PrintWriter file)
+	
+	public String toString()
 	{
+		StringBuilder builder = new StringBuilder();
 		Iterator<E> itr = vertexSet.keySet().iterator();
 		Iterator<E> adjItr;
 		Vertex<E> v;
@@ -187,20 +188,27 @@ public class Graph<E>
 		while (itr.hasNext())
 		{
 			v = vertexSet.get(itr.next());
-			file.print(v.data+ " ");
+			builder.append(v.data+ " ");
 			adjItr = v.adjList.keySet().iterator();
 			if (adjItr.hasNext())
 			{
 				c = adjItr.next();
-				file.print(c + " " + v.adjList.get(c).second);
+				builder.append(c + " " + v.adjList.get(c).second);
 			}
 			while (adjItr.hasNext())
 			{
 				c = adjItr.next();
-				file.print(" " + c + " " + v.adjList.get(c).second);
+				builder.append(" " + c + " " + v.adjList.get(c).second);
 			}
-			file.println("");
+			builder.append("\n");
 		}
+		return builder.toString();
+	}
+
+	public void save(PrintWriter file)
+	{
+		String str = toString();
+		file.print(str);
 		file.close();
 	}
 	

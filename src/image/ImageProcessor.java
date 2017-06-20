@@ -8,9 +8,16 @@ import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
+import java.util.ArrayList;
 
 public class ImageProcessor
-{
+{   
+	private enum Encoding
+	{
+		RGB, GRAYSCALE
+	}
+	public static final Encoding GRAYSCALE = Encoding.GRAYSCALE;
+	public static final Encoding RGB = Encoding.RGB;
 	private static final double RED_WEIGHT = 0.21;
 	private static final double GREEN_WEIGHT = 0.72;
 	private static final double BLUE_WEIGHT = 0.07;
@@ -32,21 +39,25 @@ public class ImageProcessor
 		return image;
 	}
 
-	public static boolean saveImage(String filename, ImageMatrix data)
+	public static boolean saveImage(String filename, ImageMatrix data, Encoding encoding)
 	{
 		boolean saved = false;
 
 		int w = data.matrix.length,
 		    h = data.matrix[0].length,
-		    gray;
+		    value;
 		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
 
 		for (int x = 0; x < w; x++)
 		{
 			for (int y = 0; y < h; y++)
 			{
-				gray = data.matrix[x][y];
-				image.setRGB(x, y, (gray << 16) + (gray << 8) + gray);
+				value = data.matrix[x][y];
+				if (encoding == GRAYSCALE)
+				{
+					value = (value << 16) + (value << 8) + value;
+				}
+				image.setRGB(x, y, value);
 			}
 		}
 		 
@@ -64,7 +75,7 @@ public class ImageProcessor
 		return saved;
 	}
 
-	public static ImageMatrix imageToGrayscaleMatrix(BufferedImage image)
+	public static ImageMatrix imageToMatrix(BufferedImage image, Encoding encoding)
 	{
 		int w = image.getWidth(),
 		    h = image.getHeight();
@@ -85,10 +96,16 @@ public class ImageProcessor
 			g = ((int) pixels[pixel + pos++] & 0xFF);
 			r = ((int) pixels[pixel + pos] & 0xFF);
 
-            gray = (int) (RED_WEIGHT*r + GREEN_WEIGHT*g + BLUE_WEIGHT*b);
-            value = (gray << 16) + (gray << 8) + gray;
+            if (encoding == GRAYSCALE)
+			{
+				value = (int) (RED_WEIGHT*r + GREEN_WEIGHT*g + BLUE_WEIGHT*b);
+			}
+            else
+			{
+				value = (r << 16) + (g << 8) + b;
+			}
 
-            matrix[col][row] = gray;
+            matrix[col][row] = value;
 
             col++;
             if (col == w)
@@ -99,6 +116,25 @@ public class ImageProcessor
 		}
 		
 		return new ImageMatrix(matrix);
+	}
+
+	public static ImageMatrix getGrayscaleCopy(ImageMatrix image)
+	{
+		int w = image.getWidth(),
+		    h = image.getHeight(),
+		    value;
+		int[][] grayCopy = new int[w][h];
+
+		for (int i = 0; i < w; i++)
+		{
+			for (int j = 0; j < h; j++)
+			{
+				value = image.matrix[i][j];
+				grayCopy[i][j] = (int) (RED_WEIGHT * ((value >> 16) & 0xFF) + GREEN_WEIGHT * ((value >> 8) & 0xFF) + BLUE_WEIGHT * (value & 0xFF));
+			}
+		}
+
+		return new ImageMatrix(grayCopy);
 	}
 
 	public static int[] getAverageColor(BufferedImage image)
@@ -117,13 +153,10 @@ public class ImageProcessor
 		return (int) (RED_WEIGHT*rgb[0] + GREEN_WEIGHT*rgb[1] + BLUE_WEIGHT*rgb[2]);
 	}
 
-	public static ImageMatrix crop(ImageMatrix img, Pair<Point, Point> boundingBox)
+	public static ImageMatrix getCrop(ImageMatrix img, Pair<Point, Point> boundingBox)
 	{
 		Point min = boundingBox.first,
 		      max = boundingBox.second;
-
-		System.out.println("MIN: " + min);
-		System.out.println("MAX: " + max);
 
 		int[][] crop = new int[max.x - min.x + 1][max.y - min.y + 1];
 
@@ -136,6 +169,13 @@ public class ImageProcessor
 		}
 
 		return new ImageMatrix(crop);
+	}
+
+	public static ImageMatrix getSegmentedImage(ImageMatrix image, ArrayList<Pixel> section)
+	{
+		Pixel[] section_copy = new Pixel[section.size()];
+		section.toArray(section_copy);
+		return getSegmentedImage(image, section_copy);
 	}
 
 	public static ImageMatrix getSegmentedImage(ImageMatrix image, Pixel[] section)
