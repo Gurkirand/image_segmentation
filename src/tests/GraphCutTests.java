@@ -1,11 +1,15 @@
-package tests;
-
-import tests.base.*;
+//package tests;
+//
+//import tests.base.*;
 import image.*;
-import graph.*;
+//import graph.*;
+import tests.*;
 import util.Pair;
 import java.util.ArrayList;
 import java.util.function.Function;
+
+import graph.*;
+
 import java.awt.image.BufferedImage;
 import java.awt.Point;
 import java.io.File;

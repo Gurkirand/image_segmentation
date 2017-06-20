@@ -1,4 +1,4 @@
-package ui;
+//package ui;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -8,6 +8,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+
+import graph.GraphCut;
+import graph.ImageDirector;
+import graph.ImageGraph;
+import image.ImageMatrix;
+import image.ImageProcessor;
+import image.Pixel;
+import util.Pair;
+
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Image;
@@ -145,6 +154,7 @@ class MarkerLabel extends javax.swing.JLabel{
 }
 
 public class UI extends javax.swing.JFrame  {
+	BufferedImage image;
 	boolean editSource = true;
 	boolean image_segmentation = false;
 	private Point source;
@@ -301,8 +311,8 @@ public class UI extends javax.swing.JFrame  {
 		if (result == JFileChooser.APPROVE_OPTION) {
 			File file = fc.getSelectedFile();
 			try {
-				BufferedImage i = ImageIO.read(file);
-				input.setIcon(i);
+				image = ImageIO.read(file);
+				input.setIcon(image);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -362,12 +372,7 @@ public class UI extends javax.swing.JFrame  {
 		{
 			listener.UIEvent();
 		}
-		System.out.println(source);
-		System.out.println(getSource());
-		for (Point p: getSinks())
-		{
-			System.out.println(p);
-		}
+		GraphCut<Pixel> gc = graphCut();
 	}                                        
 
 	public Point getSource()
@@ -381,7 +386,7 @@ public class UI extends javax.swing.JFrame  {
 	
 	public Point[] getSinks()
 	{
-		Point[] sinksCopy = new Point[sinks.size()];
+		Point[] sinksCopy = new Point[sinks.size()]; // allow for source ttoo
 		Dimension trueSize = input.getImageSize();
 		Dimension adjSize = input.getAdjustedImageSize();
 		double rw = trueSize.width / (1.0 * adjSize.width);
@@ -393,6 +398,78 @@ public class UI extends javax.swing.JFrame  {
 			sinksCopy[i] = new Point((int) (p.x * rw), (int) (p.y * rh));
 		}
 		return sinksCopy;
+	}
+	
+	public GraphCut<Pixel> graphCut(){
+		Pixel pixel;
+		ImageGraph ig;
+		GraphCut<Pixel> gc;
+		ImageMatrix im = ImageProcessor.imageToGrayscaleMatrix(image);
+		Point[] points = getAll();
+		Pair<Point, Point> box = im.getBoundingBox(points);
+		im = ImageProcessor.crop(im, box);
+		ig = new ImageGraph(im);
+		gc = new GraphCut<>(ig, new ImageDirector());
+		
+		Point source = withNewOrigin(box, getSource());
+		
+		pixel = new Pixel(im.matrix[source.x][source.y], source.x, source.y);
+		gc.setSource(pixel);
+		
+		for(Point p : withNewOrigin(box , getSinks()) ){
+			pixel = new Pixel(im.matrix[p.x][p.y], p.x, p.y);
+			gc.addSink(pixel);
+		}
+		gc.run();
+		
+		return gc;
+		
+		
+//		System.out.println(source);
+//		System.out.println(getSource());
+//		for (Point p: getSinks())
+//		{
+//			System.out.println(p);
+//		}
+	}
+	
+	public Point[] getAll(){
+		Point[] allPoints = new Point[sinks.size() + 1];
+		Point[] sinks = getSinks();
+		
+		for(int i=0; i < sinks.length; ++i){
+			allPoints[i] = sinks[i];
+		}
+		
+		allPoints[allPoints.length - 1] = getSource();
+		
+		return allPoints;
+	}
+	
+	public Point[] withNewOrigin(Pair<Point, Point> box, Point[] points){
+		Point[] newPoints = new Point[points.length];
+		Point newPoint;
+		Point origin = box.first;
+		double originX = origin.x;
+		double originY = origin.y;
+		
+		for(int i=0; i<points.length; ++i){
+			newPoint = points[i];
+			newPoint.setLocation(newPoint.x - originX, newPoint.y - originY);
+			newPoints[i] = newPoint;
+		}
+		
+		return newPoints;
+	}
+	
+	public Point withNewOrigin(Pair<Point, Point> box, Point point){
+		Point origin = box.first;
+		double originX = origin.x;
+		double originY = origin.y;
+		
+			point.setLocation(point.x - originX, point.y - originY);
+		
+		return point;
 	}
 
 	/**
