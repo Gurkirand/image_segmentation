@@ -21,6 +21,7 @@ public class Main implements UIListener {
 	public ImageGraph sourceGraph;
 	public GraphCut<Pixel> graphCut;
 	public ArrayList<Pixel> segmentedTree;
+	boolean loaded = false;
 
 
 	public static void main(String args[])
@@ -42,6 +43,7 @@ public class Main implements UIListener {
 
 	public void setImage(BufferedImage image, String name)
 	{
+		loaded = false;
 		fname = name.substring(0, name.lastIndexOf('.'));
 		sourceMatrix = ImageProcessor.imageToMatrix(image, ImageProcessor.RGB);
 		grayscaleMatrix = ImageProcessor.getGrayscaleCopy(sourceMatrix);
@@ -61,12 +63,19 @@ public class Main implements UIListener {
 
 	private void createImageGraph(Point source, Point[] sinks)
 	{
+		loaded = true;
 		Point[] points = new Point[sinks.length + 1];
 		points[0] = source;
 		System.arraycopy(sinks, 0, points, 1, sinks.length);
 		Pair<Point, Point> boundingBox = processedMatrix.getBoundingBox(points);
 		croppedMatrix = ImageProcessor.getCrop(processedMatrix, boundingBox);
 		sourceGraph.load(croppedMatrix, boundingBox.first.x, boundingBox.first.y);
+	}
+
+	private void createImageGraph()
+	{
+		loaded = true;
+		sourceGraph.load(grayscaleMatrix, 0, 0);
 	}
 
 	private void runGraphCut(Point source, Point[] sinks)
@@ -101,6 +110,8 @@ public class Main implements UIListener {
 
 	public void saveGraph()
 	{
+		if (loaded == false)
+			createImageGraph();
 		PrintWriter pw;
 		FileOutputStream fop;
 		File file;
