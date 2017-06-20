@@ -8,7 +8,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
-import util.Pair;
+import util.*;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -160,10 +160,13 @@ public class UI extends javax.swing.JFrame  {
 	private javax.swing.JButton saveGraphButton;
 	private javax.swing.JButton saveSegmentButton;
 	private javax.swing.JButton hideOutputButton;
+	private javax.swing.JButton undoButton;
 	private javax.swing.JLabel jLabel1;
 	private javax.swing.JMenu jMenu1;
 	private javax.swing.JMenu jMenu2;
 	private javax.swing.JPanel jPanel2;
+
+	private LinkedStack<Pair<Point, String>> actions = new LinkedStack<>();
 
 	boolean editSource = true;
 	boolean image_segmentation = false;
@@ -226,6 +229,7 @@ public class UI extends javax.swing.JFrame  {
 		saveGraphButton = new javax.swing.JButton();
 		saveSegmentButton = new javax.swing.JButton();
 		hideOutputButton = new javax.swing.JButton();
+		undoButton = new javax.swing.JButton();
 
 		jMenu1.setText("jMenu1");
 
@@ -287,10 +291,10 @@ public class UI extends javax.swing.JFrame  {
 			}
 		});
 		
-        // hideOutput.setText("show graph");
+        // hideOutput.setText("hide output");
         // displayButton.addActionListener(new java.awt.event.ActionListener() {
         //     public void actionPerformed(java.awt.event.ActionEvent evt) {
-        //         hideSegmentedActionPerformed(evt);
+        //         hideOutputButtonActionPerformed(evt);
         //     }
         // });
 
@@ -299,6 +303,13 @@ public class UI extends javax.swing.JFrame  {
         // displayButton.addActionListener(new java.awt.event.ActionListener() {
         //     public void actionPerformed(java.awt.event.ActionEvent evt) {
         //         displayButtonActionPerformed(evt);
+        //     }
+        // });
+        // 
+        // undoButton.setText("show graph");
+        // undoButton.addActionListener(new java.awt.event.ActionListener() {
+        //     public void actionPerformed(java.awt.event.ActionEvent evt) {
+        //         undoButtonActionPerformed(evt);
         //     }
         // });
 
@@ -422,20 +433,25 @@ public class UI extends javax.swing.JFrame  {
 
 	private void setSource(int x, int y)
 	{
+		Point _source = source;
 		source = new Point(x, y);
 		inputMarker.setSource(x, y);
+		actions.push(new Pair<>(_source, "SOURCE ADD"));
 	}
 
 	private void addSink(int x, int y)
 	{
-		sinks.add(new Point(x, y));
+		Point sink = new Point(x, y);
+		sinks.add(sink);
 		inputMarker.addSink(x, y);
+		actions.push(new Pair<>(sink, "SINK ADD"));
 	}
 
 	private void removeSink(int x, int y)
 	{
 		Point sink = inputMarker.removeClosestSink(x, y);
 		sinks.remove(sink);
+		actions.push(new Pair<>(sink, "SINK REM"));
 	}
 
 	private void sourceButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
@@ -530,9 +546,32 @@ public class UI extends javax.swing.JFrame  {
 		output.setIcon(i);
 	}
 
-	public void hideOutputActionPerformer()
+	private void hideOutputButtonActionPerformer()
 	{
 		output.setVisible(false);
+	}
+
+	private void undoButtonActionPreformer()
+	{
+		actions.pop();
+		Pair<Point, String> action = actions.peek();
+		String[] flags = action.second.split(" ");
+		if (flags[0] == "SOURCE" && flags[1] == "ADD")
+		{
+			setSource(action.first.x, action.first.y);
+		}
+		else if (flags[0] == "SINK")
+		{
+			if (flags[1] == "ADD")
+			{
+				removeSink(action.first.x, action.first.y);
+			}
+			else if (flags[1] == "REM")
+			{
+				addSink(action.first.x, action.first.y);
+			}
+		}
+
 	}
 	
 	public void run() {
