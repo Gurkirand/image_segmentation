@@ -74,9 +74,10 @@ public class ImageGraph extends Graph<Pixel>
 	}
 	
 	public ImageMatrix load(File file){
-		ArrayList<ArrayList<Integer>> matrix = new ArrayList<>();
-		ArrayList<Integer> column;
-		
+		ArrayList<Pixel> pixels = new ArrayList<>();
+		int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE,
+		    maxX = 0, maxY = 0;
+	
 		try {
 			Scanner scanner = new Scanner(file);
 			int val, x, y;
@@ -94,20 +95,17 @@ public class ImageGraph extends Graph<Pixel>
 				y = Integer.parseInt(st.nextToken());
 				
 				Pixel pixel = new Pixel(val, x, y);
+				pixels.add(pixel);
 				addToVertexSet(pixel);
 
-				if (matrix.size() <= x)
-				{
-					while (matrix.size() <= x)
-						matrix.add(new ArrayList<>());
-				}
-				column = matrix.get(x);
-				if (column.size() <= y)
-				{
-					while (column.size() <= y)
-						column.add(-1);
-				}
-				column.set(y, val);
+				if (x > maxX)
+					maxX = x;
+				if (y > maxY)
+					maxY = y;
+				if (x < minX)
+					minX = x;
+				if (y < minY)
+					minY = y;
 				
 				while(st.hasMoreTokens()){
 					val = Integer.parseInt(st.nextToken());
@@ -123,13 +121,13 @@ public class ImageGraph extends Graph<Pixel>
 			
 		}catch(FileNotFoundException e){
 			e.printStackTrace();
+			return null;
 		}
 		
-		int[][] simpleMatrix = new int[matrix.size()][matrix.get(0).size()];
-		for (int i = 0; i < matrix.size(); i++)
+		int[][] simpleMatrix = new int[maxX - minX +1][maxY - minY +1];
+		for (Pixel p: pixels)
 		{
-			for (int j = 0; j < matrix.get(0).size(); j++)
-				simpleMatrix[i][j] = matrix.get(i).get(j);
+			simpleMatrix[p.coordinate.x - minX][p.coordinate.y - minX] = p.value;
 		}
 
 		return new ImageMatrix(simpleMatrix);

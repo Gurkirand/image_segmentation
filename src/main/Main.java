@@ -93,7 +93,10 @@ public class Main implements UIListener {
 
 	public void loadGraph(File f)
 	{
-		sourceGraph.load(f);
+		sourceMatrix = sourceGraph.load(f);
+		grayscaleMatrix = ImageProcessor.getGrayscaleCopy(sourceMatrix);
+		processedMatrix = grayscaleMatrix;
+		ui.setImage(ImageProcessor.matrixToImage(sourceMatrix, ImageProcessor.GRAYSCALE));
 	}
 
 	public void saveGraph()
