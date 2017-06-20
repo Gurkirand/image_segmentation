@@ -163,6 +163,7 @@ public class UI extends javax.swing.JFrame  {
 	private javax.swing.JMenu jMenu1;
 	private javax.swing.JMenu jMenu2;
 	private javax.swing.JPanel jPanel2;
+
 	boolean editSource = true;
 	boolean image_segmentation = false;
 	private Point source;
@@ -533,7 +534,6 @@ public class UI extends javax.swing.JFrame  {
 		}
 		return sinksCopy;
 	}
-	
 	
 	public void run() {
 		/* Set the Nimbus look and feel */

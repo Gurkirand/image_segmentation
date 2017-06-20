@@ -1,8 +1,9 @@
 package tests;
-//
+
 import tests.base.*;
 import image.*;
 import graph.*;
+import tests.*;
 import util.Pair;
 import java.util.ArrayList;
 import java.util.function.Function;
