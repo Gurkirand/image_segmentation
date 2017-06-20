@@ -39,10 +39,33 @@ public class ImageProcessor
 		return image;
 	}
 
-	public static boolean saveImage(String filename, ImageMatrix data, Encoding encoding)
+	public static boolean saveImage(String filename, BufferedImage image)
 	{
 		boolean saved = false;
 
+		try
+		{
+			File ouptut = new File(filename);
+			ImageIO.write(image, "jpg", ouptut);
+			saved = true;
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+
+		return saved;
+	}
+
+	public static boolean saveImage(String filename, ImageMatrix data, Encoding encoding)
+	{
+		BufferedImage image = matrixToImage(data, encoding);
+		
+		return saveImage(filename, image);
+	}
+
+	public static BufferedImage matrixToImage(ImageMatrix data, Encoding encoding)
+	{
 		int w = data.matrix.length,
 		    h = data.matrix[0].length,
 		    value;
@@ -60,19 +83,7 @@ public class ImageProcessor
 				image.setRGB(x, y, value);
 			}
 		}
-		 
-		try
-		{
-			File ouptut = new File(filename);
-			ImageIO.write(image, "jpg", ouptut);
-			saved = true;
-		}
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
-
-		return saved;
+		return image;
 	}
 
 	public static ImageMatrix imageToMatrix(BufferedImage image, Encoding encoding)

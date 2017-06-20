@@ -159,6 +159,7 @@ public class UI extends javax.swing.JFrame  {
 	private javax.swing.JButton loadGraphButton;
 	private javax.swing.JButton saveGraphButton;
 	private javax.swing.JButton saveSegmentButton;
+	private javax.swing.JButton hideOutputButton;
 	private javax.swing.JLabel jLabel1;
 	private javax.swing.JMenu jMenu1;
 	private javax.swing.JMenu jMenu2;
@@ -211,6 +212,7 @@ public class UI extends javax.swing.JFrame  {
 		output = new ImageLabel("");
 		output.setSize(new Dimension(w, h));
 		output.setPreferredSize(new Dimension(w, h));
+		output.setVisible(false);
 		io.add(output, 0);
 		io.add(inputMarker, 1);
 		io.add(input, 2);
@@ -223,6 +225,7 @@ public class UI extends javax.swing.JFrame  {
 		loadGraphButton = new javax.swing.JButton();
 		saveGraphButton = new javax.swing.JButton();
 		saveSegmentButton = new javax.swing.JButton();
+		hideOutputButton = new javax.swing.JButton();
 
 		jMenu1.setText("jMenu1");
 
@@ -283,6 +286,14 @@ public class UI extends javax.swing.JFrame  {
 				saveSegmentButtonActionPerformed(evt);
 			}
 		});
+		
+        // hideOutput.setText("show graph");
+        // displayButton.addActionListener(new java.awt.event.ActionListener() {
+        //     public void actionPerformed(java.awt.event.ActionEvent evt) {
+        //         hideSegmentedActionPerformed(evt);
+        //     }
+        // });
+
 		
         // displayButton.setText("show graph");
         // displayButton.addActionListener(new java.awt.event.ActionListener() {
@@ -380,6 +391,11 @@ public class UI extends javax.swing.JFrame  {
 		}
 	}                                        
 
+	public void setImage(BufferedImage i)
+	{
+		input.setIcon(i);
+	}
+
 	private void imageMouseClicked(java.awt.event.MouseEvent evt) {                                   
 		int x=evt.getX();
 		int y=evt.getY();
@@ -445,53 +461,20 @@ public class UI extends javax.swing.JFrame  {
 	}                                        
 
 	private void loadGraphButtonActionPerformed(java.awt.event.ActionEvent evt) {		
-		if (file != null) {
-			listener.loadGraph();
-			// listener.segment(file);
-			// graphcut.setImageFile(file);
-			// graph = graphcut.printGraph();
-			// String ob[] = {graph};
-			// DisplayGraph.main(ob);
-			// // System.out.println(graphcut.printGraph());
-		} else {
-			JOptionPane.showOptionDialog(null, "Please select an image first", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
+		JFileChooser fc = new JFileChooser();
+		File workingDirectory = new File(System.getProperty("user.dir"));
+		fc.setCurrentDirectory(workingDirectory);
+		int result = fc.showOpenDialog(null);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			listener.loadGraph(file);
 		}
+			JOptionPane.showOptionDialog(null, "Loading graph", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
 	}                                        
 
 	private void saveGraphButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
 		listener.saveGraph();
-		// FileOutputStream fop = null;
-		// File file;
-		// try {
-
-		// 	file = new File("outputs/graph.txt");
-		// 	fop = new FileOutputStream(file);
-
-		// 	// if file doesnt exists, then create it
-		// 	if (!file.exists()) {
-		// 		file.createNewFile();
-		// 	}
-
-		// 	// get the content in bytes
-		// 	byte[] contentInBytes = graph.getBytes();
-
-		// 	fop.write(contentInBytes);
-		// 	fop.flush();
-		// 	fop.close();
-		// 	JOptionPane.showOptionDialog(null, "Graph saved to file", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
-
-
-		// } catch (IOException e) {
-		// 	e.printStackTrace();
-		// } finally {
-		// 	try {
-		// 		if (fop != null) {
-		// 			fop.close();
-		// 		}
-		// 	} catch (IOException e) {
-		// 		e.printStackTrace();
-		// 	}
-		// }
+		JOptionPane.showOptionDialog(null, "Graph saved to file", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
 	}                                        
 
 	private void saveSegmentButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
@@ -500,6 +483,12 @@ public class UI extends javax.swing.JFrame  {
 	}                                        
 
 	private void displayButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
+			// listener.segment(file);
+			// graphcut.setImageFile(file);
+			// graph = graphcut.printGraph();
+			// String ob[] = {graph};
+			// DisplayGraph.main(ob);
+			// // System.out.println(graphcut.printGraph());
 		if (file != null) {
 			String graph[] = {listener.displayGraph()};
 			DisplayGraph.main(graph);
@@ -533,6 +522,17 @@ public class UI extends javax.swing.JFrame  {
 			sinksCopy[i] = new Point((int) (p.x * rw), (int) (p.y * rh));
 		}
 		return sinksCopy;
+	}
+
+	public void displaySegmented(BufferedImage i)
+	{
+		output.setVisible(true);
+		output.setIcon(i);
+	}
+
+	public void hideOutputActionPerformer()
+	{
+		output.setVisible(false);
 	}
 	
 	public void run() {

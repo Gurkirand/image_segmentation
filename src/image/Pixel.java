@@ -43,7 +43,7 @@ public class Pixel
 
 	public int hashCode()
 	{
-		return (31 * value + coordinate.hashCode());
+		return (37 * coordinate.hashCode() + value);
 	}
 
 	public Pixel clone()

@@ -21,7 +21,7 @@ public class GraphCutTests
 {
 	public static void main(String[] args)
 	{
-		Function<Boolean, Boolean> graphCutF = (a) -> {return testGraphCut();};
+		Function<Boolean, Boolean> graphCutF = (a) -> {return testGraphCutWithImage();};
 		Timer.time("Testing Graph Cut", graphCutF, true, true);
 	}
 
@@ -93,7 +93,7 @@ public class GraphCutTests
 		}
 
 		GraphCut<Pixel> gc = new GraphCut<>(g, new ImageDirector());
-		//added test to see if saving and reading work
+		// added test to see if saving and reading work
 		PrintWriter pw;
 		try {
 			pw = new PrintWriter(new FileOutputStream(
@@ -146,7 +146,7 @@ public class GraphCutTests
 
 	public static boolean testGraphCutWithImage()
 	{
-		String name = "jumpman";
+		String name = "newwinds";
 
 		// String name = "CaravaggioSaintJohn";
 
@@ -178,6 +178,7 @@ public class GraphCutTests
 		Pair<Point, Point> b = imgM.getBoundingBox(points);
 		ImageMatrix imgM_crop = ImageProcessor.getCrop(imgM, b);
 		ImageGraph imgG = new ImageGraph();
+		System.out.println(b.first.x + " " +b.first.y);
 		imgG.load(imgM_crop, b.first.x, b.first.y);
 
 

@@ -9,7 +9,6 @@ public class GraphCut<E> extends Graph<E>
 	private int maxFlow;
 	private Director<E> director;
 	private Node<E> source;
-	private Node<E> global_sink;
 	private ArrayList<Node<E>> sinks;
 	private HashMap<Vertex<E>, Node<E>> nodeSet;
 	private HashSet<Node<E>> S, T;
@@ -31,6 +30,8 @@ public class GraphCut<E> extends Graph<E>
 
 	private void init()
 	{
+		maxFlow = 0;
+		source = null;
 		sinks = new ArrayList<>();
 		nodeSet = new HashMap<>();
 		S = new HashSet<>();
@@ -116,22 +117,20 @@ public class GraphCut<E> extends Graph<E>
 		while (true)
 		{
 			grow();
-			System.out.print("GROW");
+			// System.out.print("\nGROW ");
 			if (path.first == null)
 			{
 				break;
 			}
 			augment();
-			System.out.print(" AUGMENT");
+			// System.out.print("AUGMENT ");
 			adopt();
-			System.out.print(" ADOPT");
+			// System.out.print("ADOPT");
 			counter++;
-			// if (counter % 5 == 0)
-				System.out.println("\nCOUNT: " + counter);
-			if (counter == 11)
-				break;
+			if (counter % 5 == 0)
+				System.out.print("\nCOUNT: " + counter);
 		}
-		System.out.println("COUNT: " + counter);
+		System.out.println("\nCOUNT: " + counter);
 	}
 
 	private Node<E> createNode(Vertex<E> v)
@@ -237,52 +236,56 @@ public class GraphCut<E> extends Graph<E>
 		while (!active.isEmpty());
 		return;
 	}
-	
-	// private void augment()
-	// {
-	// 	int flow = findBottleneck();
-	// 	for (Vertex<E> v: nodeSet.keySet())
-	// 	{
-	// 		pushFlow(nodeSet.get(v), flow);
-	// 		v.unvisit();
-	// 	}
-	// 	maxFlow += flow;
-	// }
+
 	private void augment()
 	{
 		int flow = findBottleneck();
 		for (Vertex<E> v: nodeSet.keySet())
 		{
-			pushFlow(nodeSet.get(v), flow);
-			v.unvisit();
+			nodeSet.get(v).pushFlow(flow);
+			// pushFlow(nodeSet.get(v), flow);
+			// v.unvisit();
 		}
+		findOrphans();
 		maxFlow += flow;
 	}
 
-	protected int findBottleneck()
+	private int findBottleneck()
 	{
-		int bottleneck = path.first.adjList.get(path.second.vertex);
-		int capacity;
-		Node<E> child = path.first;
-		Node<E> parent = child.parent;
+		int bottleneck = Integer.MAX_VALUE,
+		    cap;
+		Node<E> currentNode,
+			parent;
 
-		while (child != source && parent.tree == Tree.SOURCE)
+		for (currentNode = path.first; currentNode != source; currentNode = currentNode.parent)
 		{
-			capacity = parent.adjList.get(child.vertex);
-			bottleneck = bottleneck > capacity ? capacity: bottleneck;
-			child = parent;
-			parent = child.parent;
+			parent = currentNode.parent;
+			if (parent == null)
+				break;
+			cap = currentNode.adjList.get(parent.vertex);
+			if (bottleneck > cap)
+			{
+				bottleneck = cap;
+			}
+			if (parent == source)
+				break;
 		}
-		
-		child = path.second;
-		parent = child.parent;
-		while (parent != null && parent.tree == Tree.SINK)
+
+
+		for (currentNode = path.second; !sinks.contains(currentNode); currentNode = currentNode.parent)
 		{
-			capacity = parent.adjList.get(child.vertex);
-			bottleneck = bottleneck > capacity ? capacity: bottleneck;
-			child = parent;
-			parent = child.parent;
+			parent = currentNode.parent;
+			if (parent == null)
+				break;
+			cap = currentNode.adjList.get(parent.vertex);
+			if (bottleneck > cap)
+			{
+				bottleneck = cap;
+			}
+			if (sinks.contains(parent))
+				break;
 		}
+
 		return bottleneck;
 	}
 	
@@ -298,7 +301,7 @@ public class GraphCut<E> extends Graph<E>
 		while (itr.hasNext())
 		{
 			parent = itr.next();
-			if (parent.vertex.visited)
+			if (parent == source || parent.vertex.visited)
 			{
 				continue;
 			}
@@ -323,19 +326,17 @@ public class GraphCut<E> extends Graph<E>
 				}
 			}
 		}
-		
-		
 		itr = T.iterator();
 		while (itr.hasNext())
 		{
 			child = itr.next();
-			if (child.vertex.visited)
+			if (sinks.contains(child) || child.vertex.visited)
 			{
 				continue;
 			}
 
 			parent = child.parent;
-			if (parent != null && !parent.vertex.visited && child.adjList.get(parent) <= 0)
+			if (parent != null && !parent.vertex.visited && child.adjList.get(parent.vertex) <= 0)
 			{
 				child.vertex.visit();
 				child.parent = null;
@@ -399,12 +400,15 @@ public class GraphCut<E> extends Graph<E>
 	private void adopt()
 	{
 		Node<E> orphan;
-
+		int counter = 0;
 		while (!orphans.isEmpty())
 		{
 			orphan = orphans.remove();
 			processOrphan(orphan);
-
+			counter++;
+			orphan.vertex.unvisit();
+			// if (counter % 100 == 0)
+				// System.out.println("Orphans: " + counter);
 		}
 	}
 
@@ -444,7 +448,6 @@ public class GraphCut<E> extends Graph<E>
 					foundParent = true;
 				}
 				
-				active.add(node);
 			}
 		}
 		
@@ -458,6 +461,10 @@ public class GraphCut<E> extends Graph<E>
 		{
 			vertex = children.next();
 			node = nodeSet.get(vertex);
+			if (orphan.parent == node)
+			{
+				node.children.remove(orphan);
+			}
 			if (node != null && node.tree == orphan.tree)
 			{
 				node.parent = null;

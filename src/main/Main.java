@@ -4,6 +4,7 @@ import image.*;
 import ui.*;
 import util.*;
 import graph.*;
+import java.io.*;
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 import java.awt.Point;
@@ -11,7 +12,9 @@ import java.awt.Point;
 public class Main implements UIListener {
 	public UI ui;
 	public String fname;
+	public BufferedImage segmentedImage;
 	public ImageMatrix sourceMatrix;
+	public ImageMatrix grayscaleMatrix;
 	public ImageMatrix processedMatrix;
 	public ImageMatrix croppedMatrix;
 	public ImageMatrix segmentedMatrix;
@@ -33,7 +36,7 @@ public class Main implements UIListener {
 
 	public void run()
 	{
-		UI ui = new UI(this);
+		ui = new UI(this);
 		ui.run();
 	}
 
@@ -41,7 +44,9 @@ public class Main implements UIListener {
 	{
 		fname = name.substring(0, name.lastIndexOf('.'));
 		sourceMatrix = ImageProcessor.imageToMatrix(image, ImageProcessor.RGB);
-		processedMatrix = ImageProcessor.getGrayscaleCopy(sourceMatrix);
+		grayscaleMatrix = ImageProcessor.getGrayscaleCopy(sourceMatrix);
+		processedMatrix = grayscaleMatrix;
+		// processedMatrix = ImageProcessor.applyGaussianBlur(ImageProcessor.getGrayscaleCopy(grayscaleMatrix), 3);
 	}
 
 	public void segment(Point source, Point[] sinks)
@@ -49,7 +54,9 @@ public class Main implements UIListener {
 		createImageGraph(source, sinks);
 		runGraphCut(source, sinks);
 		System.out.println("Maxflow: " + graphCut.getMaxFlow());
-		segmentedMatrix = ImageProcessor.getSegmentedImage(processedMatrix, segmentedTree);
+		segmentedMatrix = ImageProcessor.getSegmentedImage(grayscaleMatrix, segmentedTree);
+		segmentedImage = ImageProcessor.matrixToImage(segmentedMatrix, ImageProcessor.GRAYSCALE);
+		ui.displaySegmented(segmentedImage);
 	}
 
 	private void createImageGraph(Point source, Point[] sinks)
@@ -84,17 +91,30 @@ public class Main implements UIListener {
 		segmentedTree = graphCut.getSourceTree();
 	}
 
-	public void loadGraph()
+	public void loadGraph(File f)
 	{
+		sourceGraph.load(f);
 	}
 
 	public void saveGraph()
 	{
+		PrintWriter pw;
+		FileOutputStream fop;
+		File file;
+		try {
+
+			file = new File("outputs/graph.txt");
+			fop = new FileOutputStream(file);
+			pw = new PrintWriter(fop);
+			sourceGraph.save(pw);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}	
 	}
 
 	public void saveSegment()
 	{
-		ImageProcessor.saveImage("outputs/" + fname + "_segment.jpg", segmentedMatrix, ImageProcessor.GRAYSCALE);
+		ImageProcessor.saveImage("outputs/" + fname + "_segment.jpg", segmentedImage);
 	}
 
 	public String displayGraph()
