@@ -2,6 +2,7 @@ package main;
 
 import image.*;
 import ui.*;
+import ui.*;
 import util.*;
 import graph.*;
 import java.io.*;
@@ -109,14 +110,14 @@ public class Main implements UIListener {
 		ui.setImage(ImageProcessor.matrixToImage(sourceMatrix, ImageProcessor.GRAYSCALE));
 	}
 
-	public void saveGraph()
+	public void saveGraph(File file)
 	{
 		if (loaded == false)
 			createImageGraph();
 		PrintWriter pw;
 		try {
 
-			pw = new PrintWriter("outputs/graph.txt");
+			pw = new PrintWriter(file);
 			sourceGraph.save(pw);
 		} catch (IOException e) {
 			e.printStackTrace();
