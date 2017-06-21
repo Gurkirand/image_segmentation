@@ -114,13 +114,9 @@ public class Main implements UIListener {
 		if (loaded == false)
 			createImageGraph();
 		PrintWriter pw;
-		FileOutputStream fop;
-		File file;
 		try {
 
-			file = new File("outputs/graph.txt");
-			fop = new FileOutputStream(file);
-			pw = new PrintWriter(fop);
+			pw = new PrintWriter("outputs/graph.txt");
 			sourceGraph.save(pw);
 		} catch (IOException e) {
 			e.printStackTrace();
