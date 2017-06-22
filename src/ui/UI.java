@@ -1,5 +1,4 @@
 package ui;
-//package ui;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -329,12 +328,12 @@ public class UI extends javax.swing.JFrame {
 		// });
 
 
-		// displayButton.setText("show graph");
-		// displayButton.addActionListener(new java.awt.event.ActionListener() {
-		//     public void actionPerformed(java.awt.event.ActionEvent evt) {
-		//         displayButtonActionPerformed(evt);
-		//     }
-		// });
+		 displayButton.setText("show graph");
+		 displayButton.addActionListener(new java.awt.event.ActionListener() {
+		     public void actionPerformed(java.awt.event.ActionEvent evt) {
+		         displayButtonActionPerformed(evt);
+		     }
+		 });
 
 		// undoButton.setText("show graph");
 		// undoButton.addActionListener(new java.awt.event.ActionListener() {
@@ -562,6 +561,7 @@ public class UI extends javax.swing.JFrame {
 	private void saveSegmentButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
 		// TODO add your handling code here:
 		listener.saveSegment();
+		JOptionPane.showOptionDialog(null, "Segmentation Saved to file", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
 	}                                        
 
 	private void displayButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
@@ -575,11 +575,58 @@ public class UI extends javax.swing.JFrame {
 			String graph[] = {listener.displayGraph()};
 			DisplayGraph.main(graph);
 			// System.out.println(graph);
+			javax.swing.JFrame frame = new javax.swing.JFrame("Display Menu");
+			frame.setVisible(true);
+			frame.setSize(300,300);
+			JButton bft = new JButton("Breadth-First Traversal");
+			JButton adj = new JButton("Adjacency List");
+			JButton dft = new JButton("Depth-First Traversal");
+			
+			javax.swing.JPanel panel = new javax.swing.JPanel(new GridBagLayout());
+			frame.getContentPane().add(panel);
+			GridBagConstraints c = new GridBagConstraints();
+			c.insets = new Insets(10,10,10, 10);
+			c.gridx = 0;
+			c.gridy = 0;
+			panel.add(bft, c);
+			bft.addActionListener(new java.awt.event.ActionListener() {
+			    public void actionPerformed(java.awt.event.ActionEvent evt) {
+			        bftActionPerformed(evt);
+			     }
+			 });
+			c.gridx = 0;
+			c.gridy = 1;
+			panel.add(adj, c);
+			adj.addActionListener(new java.awt.event.ActionListener() {
+			    public void actionPerformed(java.awt.event.ActionEvent evt) {
+			         adjActionPerformed(evt);
+			     }
+			 });
+			c.gridx = 0;
+			c.gridy = 2;
+			panel.add(dft, c);
+			dft.addActionListener(new java.awt.event.ActionListener() {
+			    public void actionPerformed(java.awt.event.ActionEvent evt) {
+			         dftActionPerformed(evt);
+			     }
+			 });
 		} else {
 			JOptionPane.showOptionDialog(null, "Please select an image first", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
 		}
 	}
 
+	private void bftActionPerformed(java.awt.event.ActionEvent evt) {                                         
+		//call bft
+		JOptionPane.showOptionDialog (null, "bft", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
+	}
+	private void adjActionPerformed(java.awt.event.ActionEvent evt) {                                         
+		//call adjList
+		JOptionPane.showOptionDialog (null, "adj", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
+	}
+	private void dftActionPerformed(java.awt.event.ActionEvent evt) {                                         
+		//call dft
+		JOptionPane.showOptionDialog (null, "dft", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
+	}
 
 	public Point getSource()
 	{
