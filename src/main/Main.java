@@ -2,11 +2,13 @@ package main;
 
 import image.*;
 import ui.*;
-import ui.*;
 import util.*;
 import graph.*;
 import java.io.*;
 import java.util.ArrayList;
+
+import javax.swing.JFileChooser;
+
 import java.awt.image.BufferedImage;
 import java.awt.Point;
 
@@ -126,7 +128,14 @@ public class Main implements UIListener {
 
 	public void saveSegment()
 	{
-		ImageProcessor.saveImage("outputs/" + fname + "_segment.jpg", segmentedImage);
+		JFileChooser fc = new JFileChooser();
+		File workingDirectory = new File(System.getProperty("user.dir"));
+		fc.setCurrentDirectory(workingDirectory);
+		int result = fc.showOpenDialog(null);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File file = fc.getSelectedFile();
+			ImageProcessor.saveImage(file, segmentedImage);
+		}
 	}
 
 	public String displayGraph()

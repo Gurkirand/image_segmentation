@@ -39,14 +39,13 @@ public class ImageProcessor
 		return image;
 	}
 
-	public static boolean saveImage(String filename, BufferedImage image)
+	public static boolean saveImage(File file, BufferedImage image)
 	{
 		boolean saved = false;
 
 		try
 		{
-			File ouptut = new File(filename);
-			ImageIO.write(image, "jpg", ouptut);
+			ImageIO.write(image, "jpg", file);
 			saved = true;
 		}
 		catch(Exception e)
@@ -57,11 +56,11 @@ public class ImageProcessor
 		return saved;
 	}
 
-	public static boolean saveImage(String filename, ImageMatrix data, Encoding encoding)
+	public static boolean saveImage(File file, ImageMatrix data, Encoding encoding)
 	{
 		BufferedImage image = matrixToImage(data, encoding);
 		
-		return saveImage(filename, image);
+		return saveImage(file, image);
 	}
 
 	public static BufferedImage matrixToImage(ImageMatrix data, Encoding encoding)
