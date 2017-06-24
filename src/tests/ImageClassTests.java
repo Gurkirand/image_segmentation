@@ -22,9 +22,9 @@ public class ImageClassTests
 		BufferedImage image = Timer.time("Load Image", loadF, "data/portrait_large.jpg");
 		Timer.time("Average Color", averageF, image);
 		ImageMatrix imageMatrix = Timer.time("Grayscale Image Matrix", matrixF, image);
-		Timer.time("Save Grayscale Image Matrix", saveF, new Pair<>("data/tests/portrait_large_gray.jpg", imageMatrix), true);
+		Timer.time("Save Grayscale Image Matrix", saveF, new Pair<>("output/tests/portrait_large_gray.jpg", imageMatrix), true);
 		ImageMatrix blurMatrix = Timer.time("Gaussian Blur", blurF, new Pair<>(imageMatrix, 3));
-		Timer.time("Save Blurred Image Matrix", saveF, new Pair<>("data/tests/portrait_large_blur.jpg", blurMatrix), true);
+		Timer.time("Save Blurred Image Matrix", saveF, new Pair<>("output/tests/portrait_large_blur.jpg", blurMatrix), true);
 
 		ArrayList<Pixel> _section = new ArrayList<>();
 		for (int i = 0; i < imageMatrix.matrix.length / 2; i++)
@@ -39,7 +39,7 @@ public class ImageClassTests
 
 		ImageMatrix segment = Timer.time("Segment Image", segmentF, new Pair<>(imageMatrix, section), null);
 
-		Timer.time("Save Segmented Image Matrix", saveF, new Pair<>("data/tests/portrait_large_segment.jpg", segment), true);
+		Timer.time("Save Segmented Image Matrix", saveF, new Pair<>("output/tests/portrait_large_segment.jpg", segment), true);
 		
 	}
 }

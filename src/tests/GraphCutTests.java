@@ -97,17 +97,17 @@ public class GraphCutTests
 		PrintWriter pw;
 		try {
 			pw = new PrintWriter(new FileOutputStream(
-				    new File("data/tests/graph_save.txt")));
+				    new File("output/tests/graph_save.txt")));
 			gc.save(pw);
 		} catch (FileNotFoundException e) {
 			System.out.println("file not found");
 			e.printStackTrace();
 		} 
-		ig.load(new File("data/tests/graph_save.txt"));
+		ig.load(new File("output/tests/graph_save.txt"));
 		PrintWriter pw1;
 		try {
 			pw1 = new PrintWriter(new FileOutputStream(
-					    new File("data/tests/graph_loaded_save.txt")));
+					    new File("output/tests/graph_loaded_save.txt")));
 			ig.save(pw1);
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -146,27 +146,17 @@ public class GraphCutTests
 
 	public static boolean testGraphCutWithImage()
 	{
-		String name = "newwinds";
-
-		// String name = "CaravaggioSaintJohn";
-
+		String name = "newwinds_2";
+		
 		BufferedImage image = ImageProcessor.load("data/" + name + ".jpg");
 		ImageMatrix imgM = ImageProcessor.imageToMatrix(image, ImageProcessor.GRAYSCALE);
-
-		//NEWWINDS
-		Pixel source = new Pixel(imgM.matrix[41][45], 41, 45);
-		Pixel[] sinks = new Pixel[]{
-			new Pixel(imgM.matrix[2][92], 2, 92),
-			new Pixel(imgM.matrix[42][5], 42, 5),
-			new Pixel(imgM.matrix[90][80], 90, 80)
+ 		Pixel source = new Pixel(imgM.matrix[89][83], 89, 83);
+ 		Pixel[] sinks = new Pixel[]{
+ 			new Pixel(imgM.matrix[13][183], 13, 183),
+ 			new Pixel(imgM.matrix[13][3], 13, 3),
+ 			new Pixel(imgM.matrix[192][2], 192, 2),
+ 			new Pixel(imgM.matrix[192][183], 192, 183)
 		};
-
-		// Caravaggio
-		// Pixel source = new Pixel(imgM.matrix[1162][906], 1162, 906);
-		// Pixel[] sinks = new Pixel[]{
-		// 	new Pixel(imgM.matrix[815][1080], 815, 1080),
-		// 	new Pixel(imgM.matrix[1557][360], 1557, 360),
-		// };
 
 		Point[] points = new Point[sinks.length + 1];
 		points[0] = source.coordinate;
@@ -199,7 +189,8 @@ public class GraphCutTests
 		s.toArray(s_copy);
 		ImageMatrix imgM_segmented = ImageProcessor.getSegmentedImage(imgM, s_copy);
 	
-		ImageProcessor.saveImage("data/tests/" + name + "_segment.jpg", imgM_segmented, ImageProcessor.GRAYSCALE);
+		File saveF = new File("output/tests/" + name + "_segment.jpg");
+		ImageProcessor.saveImage(saveF, imgM_segmented, ImageProcessor.GRAYSCALE);
 
 		return true;
 	}
