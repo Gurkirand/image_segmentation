@@ -169,7 +169,7 @@ public class GraphCutTests
 		ImageMatrix imgM_crop = ImageProcessor.getCrop(imgM, b);
 		ImageGraph imgG = new ImageGraph();
 		System.out.println(b.first.x + " " +b.first.y);
-		imgG.load(imgM_crop, b.first.x, b.first.y);
+		imgG.load(imgM_crop, b.first);
 
 
 		GraphCut<Pixel> gc = new GraphCut<>(imgG, new ImageDirector());

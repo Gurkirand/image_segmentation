@@ -38,6 +38,7 @@ public class ImageProcessor
 		
 		return image;
 	}
+	
 
 	public static boolean saveImage(File file, BufferedImage image)
 	{
@@ -180,6 +181,11 @@ public class ImageProcessor
 
 		return new ImageMatrix(crop);
 	}
+
+// 	public static Pair<ImageMatrix, ImageMatrix> getDisjointMatrix(ImageMatrix img1, ImageMatrix img2)
+// 	{
+		
+// 	}
 
 	public static ImageMatrix getSegmentedImage(ImageMatrix image, ArrayList<Pixel> section)
 	{

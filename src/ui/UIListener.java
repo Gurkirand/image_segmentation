@@ -12,4 +12,6 @@ public interface UIListener
 	public void saveGraph(File f);
 	public void saveSegment();
 	public String displayGraph();
+	public String displayGraphBFT();
+	public String displayGraphDFT();
 }

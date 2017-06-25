@@ -25,6 +25,7 @@ public class Main implements UIListener {
 	public GraphCut<Pixel> graphCut;
 	public ArrayList<Pixel> segmentedTree;
 	boolean loaded = false;
+	boolean imageChange = false;
 
 
 	public static void main(String args[])
@@ -46,12 +47,13 @@ public class Main implements UIListener {
 
 	public void setImage(BufferedImage image, String name)
 	{
+		if (loaded)
+			imageChange = true;
 		fname = name.substring(0, name.lastIndexOf('.'));
 		sourceMatrix = ImageProcessor.imageToMatrix(image, ImageProcessor.RGB);
 		grayscaleMatrix = ImageProcessor.getGrayscaleCopy(sourceMatrix);
 		processedMatrix = grayscaleMatrix;
 		loaded = false;
-		// processedMatrix = ImageProcessor.applyGaussianBlur(ImageProcessor.getGrayscaleCopy(grayscaleMatrix), 3);
 	}
 
 	public void segment(Point source, Point[] sinks)
@@ -71,13 +73,14 @@ public class Main implements UIListener {
 		System.arraycopy(sinks, 0, points, 1, sinks.length);
 		Pair<Point, Point> boundingBox = processedMatrix.getBoundingBox(points);
 		croppedMatrix = ImageProcessor.getCrop(processedMatrix, boundingBox);
-		sourceGraph.load(croppedMatrix, boundingBox.first.x, boundingBox.first.y);
+		sourceGraph.clear();
+		sourceGraph.load(croppedMatrix, boundingBox.first);
 		loaded = true;
 	}
 
 	private void createImageGraph()
 	{
-		sourceGraph.load(grayscaleMatrix, 0, 0);
+		sourceGraph.load(grayscaleMatrix);
 		loaded = true;
 	}
 
@@ -105,6 +108,7 @@ public class Main implements UIListener {
 
 	public void loadGraph(File f)
 	{
+		sourceGraph.clear();
 		sourceMatrix = sourceGraph.load(f);
 		// grayscaleMatrix = ImageProcessor.getGrayscaleCopy(sourceMatrix);
 		grayscaleMatrix = sourceMatrix;
@@ -141,6 +145,16 @@ public class Main implements UIListener {
 	public String displayGraph()
 	{
 		return sourceGraph.toString();
+	}
+
+	public String displayGraphBFT()
+	{
+		return sourceGraph.BFT();
+	}
+
+	public String displayGraphDFT()
+	{
+		return sourceGraph.DFT();
 	}
 
 }

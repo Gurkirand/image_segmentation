@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -12,12 +11,7 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 import util.*;
 
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.Graphics;
-import java.awt.Color;
 import java.awt.*;
 import java.awt.event.*;
 /**
@@ -25,142 +19,12 @@ import java.awt.event.*;
  * @author Joohong Ahn, Willie, Gurkiran
  */
 
-class ImageLabel extends javax.swing.JLabel {
-	public Image _myimage;
-	public int _imageW, _imageH;
-
-	public ImageLabel(String text){
-		super(text);
-	}
-
-	public void setIcon(BufferedImage img)
-	{
-		_imageW = img.getWidth();
-		_imageH = img.getHeight();
-		setIcon(new ImageIcon(img));
-	}
-
-	public Dimension getImageSize()
-	{
-		return new Dimension(_imageW, _imageH);
-	}
-
-	public Dimension getAdjustedImageSize()
-	{
-		int w, h;
-		if (_imageW > _imageH)
-		{
-			w = this.getWidth();
-			h = (int) (((1.0 * _imageH) / _imageW) * w);
-		}
-		else
-		{
-			h = this.getHeight();
-			w = (int) (((1.0 * _imageW) / _imageH) * h);
-		}
-		return new Dimension(w, h);
-	}
-
-	public void setIcon(javax.swing.Icon icon) {
-		super.setIcon(icon);
-		if (icon instanceof ImageIcon)
-		{
-			_myimage = ((ImageIcon) icon).getImage();
-		}
-	}
-
-	@Override
-	public void paint(Graphics g){
-		Dimension s = getAdjustedImageSize();
-		int w = s.width,
-		    h = s.height;
-
-		g.drawImage(_myimage, 0, 0, w, h, null);
-	}
-}
-
-class MarkerLabel extends javax.swing.JLabel{
-	public Point source;
-	public ArrayList<Point> sinks;
-
-	public MarkerLabel(String text){
-		super(text);
-		sinks = new ArrayList<>();
-	}
-
-	public void clear()
-	{
-		sinks.clear();
-		source = null;
-	}
-
-	public void setSource(int x, int y)
-	{
-		source = new Point(x, y);
-		repaint();
-	}
-
-	public void addSink(int x, int y)
-	{
-		sinks.add(new Point(x, y));
-		repaint();
-	}
-
-	public void removeSource()
-	{
-		source = null;
-		repaint();
-	}
-
-	public void removeSink(int x, int y)
-	{
-		sinks.remove(new Point(x, y));
-		repaint();
-	}
-
-	public Point removeClosestSink(int x, int y)
-	{
-		if (sinks.isEmpty())
-		{
-			return null;
-		}
-		double dist = 1000,
-		       _dist;
-		Point sink = null;
-		for (Point p: sinks)
-		{
-			_dist = p.distance(x, y);
-			if (_dist < dist)
-			{
-				dist = _dist;
-				sink = p;
-			}
-		}
-		sinks.remove(sink);
-		repaint();
-		return sink;
-	}
-
-	@Override
-	public void paint(Graphics g){
-		if (source != null)
-		{
-			g.setColor(Color.red);
-			g.fillOval(source.x - 5, source.y - 5, 10, 10);
-		}
-		g.setColor(Color.blue);
-		for (Point p: sinks)
-		{
-			g.fillOval(p.x - 5, p.y - 5, 10, 10);
-		}
-	}
-}
-
 public class UI extends javax.swing.JFrame {
 
 	private ImageLabel input;
 	private MarkerLabel inputMarker;
 	private ImageLabel output;
+	private DisplayGraph display;
 	private javax.swing.JLayeredPane io;
 	private javax.swing.JButton imageButton;
 	private javax.swing.JButton sourceButton;
@@ -438,14 +302,15 @@ public class UI extends javax.swing.JFrame {
 	}// </editor-fold>                        
 
 	private void imageButtonActionPerformed(java.awt.event.ActionEvent evt) {                                         
-		output.setVisible(false);
-		output.repaint();
-		inputMarker.clear();
 		JFileChooser fc = new JFileChooser();
 		File workingDirectory = new File(System.getProperty("user.dir"));
 		fc.setCurrentDirectory(workingDirectory);
 		int result = fc.showOpenDialog(null);
 		if (result == JFileChooser.APPROVE_OPTION) {
+			output.setVisible(false);
+			output.repaint();
+			inputMarker.clear();
+			editSource = true;
 			file = fc.getSelectedFile();
 			try {
 				BufferedImage i = ImageIO.read(file);
@@ -540,15 +405,16 @@ public class UI extends javax.swing.JFrame {
 	}                                        
 
 	private void loadGraphButtonActionPerformed(java.awt.event.ActionEvent evt) {		
-		output.setVisible(false);
-		input.repaint();
-		output.repaint();
-		inputMarker.clear();
 		JFileChooser fc = new JFileChooser();
 		File workingDirectory = new File(System.getProperty("user.dir"));
 		fc.setCurrentDirectory(workingDirectory);
 		int result = fc.showOpenDialog(null);
 		if (result == JFileChooser.APPROVE_OPTION) {
+			output.setVisible(false);
+			input.repaint();
+			output.repaint();
+			inputMarker.clear();
+			editSource = true;
 			file = fc.getSelectedFile();
 			listener.loadGraph(file);
 		}
@@ -581,9 +447,6 @@ public class UI extends javax.swing.JFrame {
 		// DisplayGraph.main(ob);
 		// // System.out.println(graphcut.printGraph());
 		if (file != null) {
-			String graph[] = {listener.displayGraph()};
-			DisplayGraph.main(graph);
-			// System.out.println(graph);
 			javax.swing.JFrame frame = new javax.swing.JFrame("Display Menu");
 			frame.setVisible(true);
 			frame.setSize(300,300);
@@ -624,16 +487,39 @@ public class UI extends javax.swing.JFrame {
 		}
 	}
 
-	private void bftActionPerformed(java.awt.event.ActionEvent evt) {                                         
-		//call bft
-		JOptionPane.showOptionDialog (null, "bft", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
-	}
 	private void adjActionPerformed(java.awt.event.ActionEvent evt) {                                         
 		//call adjList
+		if (display != null)
+		{
+		   display.dispatchEvent(new WindowEvent(display, WindowEvent.WINDOW_CLOSING));
+		}
+		String graph[] = {listener.displayGraph()};
+		display = new DisplayGraph(graph);
+		display.run();
 		JOptionPane.showOptionDialog (null, "adj", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
+	}
+
+	private void bftActionPerformed(java.awt.event.ActionEvent evt) {                                         
+		//call bft
+		if (display != null)
+		{
+		   display.dispatchEvent(new WindowEvent(display, WindowEvent.WINDOW_CLOSING));
+		}
+		String graph[] = {listener.displayGraphBFT()};
+		display = new DisplayGraph(graph);
+		display.run();
+			// System.out.println(graph);
+		JOptionPane.showOptionDialog (null, "bft", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
 	}
 	private void dftActionPerformed(java.awt.event.ActionEvent evt) {                                         
 		//call dft
+		if (display != null)
+		{
+		   display.dispatchEvent(new WindowEvent(display, WindowEvent.WINDOW_CLOSING));
+		}
+		String graph[] = {listener.displayGraphDFT()};
+		display = new DisplayGraph(graph);
+		display.run();
 		JOptionPane.showOptionDialog (null, "dft", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
 	}
 
@@ -733,37 +619,8 @@ public class UI extends javax.swing.JFrame {
 	/**
 	 * @param args the command line arguments
 	 */
-	//RENAME RUN? 
 	public static void main(String args[]) {
-		/* Set the Nimbus look and feel */
-		//<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-		/* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-		 * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-		 */
-		try {
-			for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-				if ("Nimbus".equals(info.getName())) {
-					javax.swing.UIManager.setLookAndFeel(info.getClassName());
-					break;
-				}
-			}
-		} catch (ClassNotFoundException ex) {
-			java.util.logging.Logger.getLogger(UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (InstantiationException ex) {
-			java.util.logging.Logger.getLogger(UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (IllegalAccessException ex) {
-			java.util.logging.Logger.getLogger(UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		} catch (javax.swing.UnsupportedLookAndFeelException ex) {
-			java.util.logging.Logger.getLogger(UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-		}
-		//</editor-fold>
-
-		/* Create and display the form */
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				new UI().setVisible(true);
-			}
-		});
+		new UI().run();
 	}
 }
 
