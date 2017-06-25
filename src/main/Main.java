@@ -46,11 +46,11 @@ public class Main implements UIListener {
 
 	public void setImage(BufferedImage image, String name)
 	{
-		loaded = false;
 		fname = name.substring(0, name.lastIndexOf('.'));
 		sourceMatrix = ImageProcessor.imageToMatrix(image, ImageProcessor.RGB);
 		grayscaleMatrix = ImageProcessor.getGrayscaleCopy(sourceMatrix);
 		processedMatrix = grayscaleMatrix;
+		loaded = false;
 		// processedMatrix = ImageProcessor.applyGaussianBlur(ImageProcessor.getGrayscaleCopy(grayscaleMatrix), 3);
 	}
 
@@ -66,19 +66,19 @@ public class Main implements UIListener {
 
 	private void createImageGraph(Point source, Point[] sinks)
 	{
-		loaded = true;
 		Point[] points = new Point[sinks.length + 1];
 		points[0] = source;
 		System.arraycopy(sinks, 0, points, 1, sinks.length);
 		Pair<Point, Point> boundingBox = processedMatrix.getBoundingBox(points);
 		croppedMatrix = ImageProcessor.getCrop(processedMatrix, boundingBox);
 		sourceGraph.load(croppedMatrix, boundingBox.first.x, boundingBox.first.y);
+		loaded = true;
 	}
 
 	private void createImageGraph()
 	{
-		loaded = true;
 		sourceGraph.load(grayscaleMatrix, 0, 0);
+		loaded = true;
 	}
 
 	private void runGraphCut(Point source, Point[] sinks)

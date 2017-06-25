@@ -176,7 +176,7 @@ public class UI extends javax.swing.JFrame {
 	private javax.swing.JMenu jMenu2;
 	private javax.swing.JPanel jPanel2;
 	private JButton displayButton;
-	JLabel hideOutput;
+	// JLabel hideOutput;
 
 	private LinkedStack<Pair<Point, String>> actions = new LinkedStack<>();
 
@@ -228,6 +228,7 @@ public class UI extends javax.swing.JFrame {
 		jMenu1 = new javax.swing.JMenu();
 		jMenu2 = new javax.swing.JMenu();
 		jPanel2 = new javax.swing.JPanel();
+		jPanel2.setSize(new Dimension(w, h));
 		jPanel2.setPreferredSize(new Dimension(w, h));
 
 		io = new javax.swing.JLayeredPane();
@@ -255,10 +256,10 @@ public class UI extends javax.swing.JFrame {
 		loadGraphButton = new javax.swing.JButton();
 		saveGraphButton = new javax.swing.JButton();
 		saveSegmentButton = new javax.swing.JButton();
-		hideOutputButton = new javax.swing.JButton();
+		// hideOutputButton = new javax.swing.JButton();
 		undoButton = new javax.swing.JButton();
 		 displayButton=new javax.swing.JButton();
-		 hideOutput=new javax.swing.JLabel();
+		 // hideOutput=new javax.swing.JLabel();
 
 		jMenu1.setText("jMenu1");
 
@@ -320,12 +321,6 @@ public class UI extends javax.swing.JFrame {
 			}
 		});
 
-		// hideOutput.setText("hide output");
-		// displayButton.addActionListener(new java.awt.event.ActionListener() {
-		//     public void actionPerformed(java.awt.event.ActionEvent evt) {
-		//         hideOutputButtonActionPerformed(evt);
-		//     }
-		// });
 
 
 		 displayButton.setText("show graph");
@@ -361,23 +356,34 @@ public class UI extends javax.swing.JFrame {
 								.addGroup(jPanel2Layout.createSequentialGroup()
 									.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
 										.addComponent(imageButton, javax.swing.GroupLayout.DEFAULT_SIZE, 179, Short.MAX_VALUE)
-										.addComponent(sinkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-									.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
 										.addComponent(loadGraphButton, javax.swing.GroupLayout.DEFAULT_SIZE, 169, Short.MAX_VALUE)
-										.addComponent(saveGraphButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+										)
 									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 									.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-										.addGroup(jPanel2Layout.createSequentialGroup()
-											.addComponent(segmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-											.addComponent(saveSegmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
-											.addComponent(displayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-											.addComponent(hideOutputButton, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
-											.addComponent(undoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
+										.addComponent(sourceButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										.addComponent(saveGraphButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										)
+
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+										// .addGroup(jPanel2Layout.createSequentialGroup()
+										.addComponent(sinkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										.addComponent(segmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+										// .addComponent(sinkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+										// .addComponent(segmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 142, javax.swing.GroupLayout.PREFERRED_SIZE))
+										// )
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+										// .addGroup(jPanel2Layout.createSequentialGroup()
+											// .addComponent(saveSegmentButton, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+											// .addComponent(displayButton, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+											.addComponent(saveSegmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+											.addComponent(displayButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+											// .addComponent(hideOutputButton, javax.swing.GroupLayout.PREFERRED_SIZE, 118, javax.swing.GroupLayout.PREFERRED_SIZE)
+											// .addComponent(undoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 108, javax.swing.GroupLayout.PREFERRED_SIZE)
 											
-												)
-										.addComponent(sourceButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+												// )
+										)))
 							.addGap(96, 96, 96))))
 							);
 		jPanel2Layout.setVerticalGroup(
@@ -388,25 +394,28 @@ public class UI extends javax.swing.JFrame {
 					.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 					.addComponent(io, io.getPreferredSize().height, io.getPreferredSize().height, Short.MAX_VALUE)
 					.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-					.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(jPanel2Layout.createSequentialGroup()
+					.addGroup(jPanel2Layout.createSequentialGroup()
+						.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 							.addComponent(imageButton, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-							.addGap(0, 0, Short.MAX_VALUE))
-						.addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-							.addGap(0, 0, Short.MAX_VALUE)
-							.addComponent(loadGraphButton, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE))
-						.addComponent(sourceButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-					.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-					.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addComponent(saveSegmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE)
-						.addComponent(sinkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(saveGraphButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(segmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(displayButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(hideOutputButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-						.addComponent(undoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(sourceButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(sinkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(saveSegmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, 61, Short.MAX_VALUE))
+							// .addGap(0, 0, Short.MAX_VALUE)
+						// .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+						.addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+							// .addGap(0, 0, Short.MAX_VALUE)
+							.addComponent(loadGraphButton, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+							.addComponent(saveGraphButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(segmentButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							.addComponent(displayButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+							))
+					// .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+					// .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+					// 	// .addComponent(hideOutputButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+					// 	// .addComponent(undoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						
-							)
+					// 		)
 						
 					.addContainerGap())
 					);
@@ -437,7 +446,7 @@ public class UI extends javax.swing.JFrame {
 		fc.setCurrentDirectory(workingDirectory);
 		int result = fc.showOpenDialog(null);
 		if (result == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
+			file = fc.getSelectedFile();
 			try {
 				BufferedImage i = ImageIO.read(file);
 				listener.setImage(i, file.getName());
@@ -540,7 +549,7 @@ public class UI extends javax.swing.JFrame {
 		fc.setCurrentDirectory(workingDirectory);
 		int result = fc.showOpenDialog(null);
 		if (result == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
+			file = fc.getSelectedFile();
 			listener.loadGraph(file);
 		}
 		JOptionPane.showOptionDialog(null, "Loading graph", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
@@ -552,7 +561,7 @@ public class UI extends javax.swing.JFrame {
 		fc.setCurrentDirectory(workingDirectory);
 		int result = fc.showOpenDialog(null);
 		if (result == JFileChooser.APPROVE_OPTION) {
-			File file = fc.getSelectedFile();
+			file = fc.getSelectedFile();
 			listener.saveGraph(file);
 		}
 		JOptionPane.showOptionDialog(null, "Graph saved to file", "Message", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, new Object[]{}, null);
@@ -659,10 +668,10 @@ public class UI extends javax.swing.JFrame {
 		output.setIcon(i);
 	}
 
-	public void hideOutputButtonActionPerformer(java.awt.event.ActionEvent evt)
-	{
-		output.setVisible(false);
-	}
+	// public void hideOutputButtonActionPerformer(java.awt.event.ActionEvent evt)
+	// {
+	// 	output.setVisible(false);
+	// }
 
 	private void undo()
 	{
