@@ -80,7 +80,7 @@ public class ImageGraph extends Graph<Pixel>
 
 	private double weightDifference(Pixel p1, Pixel p2)
 	{
-		return 100 * (p1.value > p2.value ? p2.value / (1.0 * p1.value) : p1.value / (1.0 * p2.value));
+		return (p1.value > p2.value ? Math.pow(Math.E, 50/(p1.value - p2.value + 1)) : Math.pow(Math.E, 50/(p2.value - p1.value + 1)));
 	}
 
 	public ImageMatrix load(File file){
